@@ -1,0 +1,23 @@
+{% extends 'homepage/base.html' %}
+{% load static %}
+{% block content %}
+    <h1>{{year}} BAD League Teams</h1>
+    <table border="1">
+        <tr>
+            <th colspan="2">Team</th>
+            <th>Owner</th>
+            <th>Ballpark</th>
+            <th>Division</th>
+        </tr>
+        {% for team in team_list %}
+            <tr>
+                <td><img src="{% static "league/" %}2017{{team.abbreviation}}.jpg"
+                    alt="{{team.location}} {{team.nickname}} Logo"/> </td>
+                <td><a href="{% url 'league:team_detail' year team.abbreviation %}">{{team.location}} {{team.nickname}}</a></td>
+                <td><a href="mailto:{{team.owner.email}}">{{team.owner.first_name}} {{team.owner.last_name}}</a> </td>
+                <td>{{team.ballpark.year}} {{team.ballpark.location}}</td>
+                <td>{{team.get_division_display}}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

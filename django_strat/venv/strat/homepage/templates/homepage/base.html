@@ -1,0 +1,31 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css"
+          href="{% static 'base.css' %}"
+    <title>BAD League</title>
+</head>
+<body>
+    <header>
+        <img src="{% static 'BAD_logo.jpg'%}"
+             alt="BAD League Logo"/>
+        <h1>Building A Dynasty Strat-O-Matic League</h1>
+    </header>
+    <nav>
+        <h2><a href="{% url 'homepage:home' %}">Home</a> |
+            News |
+            Schedule |
+            Standings |
+            <a href="{% url 'league:team_index' 2017 %}">Teams</a> |
+            <a href="{% url 'league:player_index' %}">Players</a> |
+            Draft |
+            Free Agency |
+            Statistics</h2>
+    </nav>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

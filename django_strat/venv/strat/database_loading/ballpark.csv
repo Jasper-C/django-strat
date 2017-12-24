@@ -1,0 +1,33 @@
+id,name,location,year,singles_left,singles_right,homeruns_left,homeruns_right
+2016_MIN,Target Field,Minnesota,2016,12,12,9,9
+2016_MIA,Marlins Park,Miami,2016,10,10,2,2
+2016_CHC,Wrigley Field,Chicago (NL),2016,4,4,3,12
+2016_CIN,Great American Ballpark,Cincinnati,2016,5,5,17,12
+2016_NYM,Citi Field,New York (NL),2016,1,1,11,11
+2016_MIL,Miller Park,Milwaukee,2016,9,2,19,13
+2016_SFG,AT&T Park,San Francisco,2016,11,11,1,1
+2016_NYY,Yankee Stadium,New York (AL),2016,3,3,19,16
+2016_ARI,Chase Field,Arizona,2016,13,13,11,11
+2016_PHI,Citizens Bank Park,Philadelphia,2016,1,1,13,13
+2016_STL,Busch Stadium,St. Louis,2016,10,10,6,6
+2016_LAA,Angels Stadium,Los Angeles (AL),2016,3,3,7,7
+2016_HOU,Minute Maid Park,Houston,2016,1,4,9,9
+2016_BAL,Oriole Park at Camden Yards,Baltimore,2016,8,8,13,10
+2016_BOS,Fenway Park,Boston,2016,19,16,1,10
+2016_KCR,Kauffman Stadium,Kansas City,2016,13,13,3,3
+2017_MIN,Target Field,Minnesota,2017,12,12,9,9
+2017_MIA,Marlins Park,Miami,2017,10,10,2,2
+2017_CHC,Wrigley Field,Chicago (NL),2017,4,4,3,12
+2017_CIN,Great American Ballpark,Cincinnati,2017,5,5,17,12
+2017_NYM,Citi Field,New York (NL),2017,1,1,11,11
+2017_MIL,Miller Park,Milwaukee,2017,9,2,19,13
+2017_SFG,AT&T Park,San Francisco,2017,11,11,1,1
+2017_NYY,Yankee Stadium,New York (AL),2017,3,3,19,16
+2017_ARI,Chase Field,Arizona,2017,13,13,11,11
+2017_PHI,Citizens Bank Park,Philadelphia,2017,1,1,13,13
+2017_STL,Busch Stadium,St. Louis,2017,10,10,6,6
+2017_LAA,Angels Stadium,Los Angeles (AL),2017,3,3,7,7
+2017_HOU,Minute Maid Park,Houston,2017,1,4,9,9
+2017_BAL,Oriole Park at Camden Yards,Baltimore,2017,8,8,13,10
+2017_BOS,Fenway Park,Boston,2017,19,16,1,10
+2017_KCR,Kauffman Stadium,Kansas City,2017,13,13,3,3

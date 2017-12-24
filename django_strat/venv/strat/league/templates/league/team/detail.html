@@ -1,0 +1,10 @@
+{% extends "./base.html" %}
+{% block content %}
+    {% for player in roster %}
+        <h3>player:{{player}}</h3>
+    {% endfor %}
+    <h2>Team Batting</h2>
+    <h3>Batting Table</h3>
+    <h2>Team Pitching</h2>
+    <h3>Pitching Table</h3>
+{% endblock %}

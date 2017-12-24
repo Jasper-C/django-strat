@@ -1,0 +1,79 @@
+{% extends "./base.html" %}
+
+{% load humanize %}
+{% load players_tags %}
+{% block content %}
+<table>
+    <tr>
+        <th>Player</th>
+        <th>Contract</th>
+        <th>{{team.year}}</th>
+        <th>{{team.year|add:"+1"}}</th>
+        <th>{{team.year|add:"+2"}}</th>
+        <th>{{team.year|add:"+3"}}</th>
+        <th>{{team.year|add:"+4"}}</th>
+    </tr>
+    {% for p in contracts %}
+    <tr>
+        <td><a href="{% url 'league:player_detail' p.player_id %}">{{p.player.last_name}}, {{p.player.first_name}}</a></td>
+        <td align="center">{{p.display_contract}}</td>
+        <td align="right">${{p.salary | intcomma}}</td>
+        <td align="right">{{ p | plus_years:1 }}</td>
+        <td align="right">{{ p | plus_years:2 }}</td>
+        <td align="right">{{ p | plus_years:3 }}</td>
+        <td align="right">{{ p | plus_years:4 }}</td>
+    </tr>
+    {% endfor %}
+    {% for p in payroll %}
+    <tr>
+        <td>{{p.note}}</td>
+        <td align="center">{{p.year}}</td>
+        {% if p.year == team.year %}
+            {% if p.paying.id == team.abbreviation %}
+                <td style="align:right;">${{p.money|intcomma}}</td>
+            {% else %}
+                <td style="align:right; color:red;">-${{p.money|intcomma}}</td>
+            {% endif %}
+        {% else %}
+            <td></td>
+        {% endif%}
+        {% if p.year == team.year|add:"+1" %}
+            {% if p.paying.id == team.abbreviation %}
+                <td align="right">${{p.money|intcomma}}</td>
+            {% else %}
+                <td align="right" style="color:red;">-${{p.money|intcomma}}</td>
+            {% endif %}
+        {% else %}
+            <td></td>
+        {% endif%}
+        {% if p.year == team.year|add:"+2" %}
+            {% if p.paying.id == team.abbreviation %}
+                <td align="right">${{p.money|intcomma}}</td>
+            {% else %}
+                <td align="right" style="color:red;">-${{p.money|intcomma}}</td>
+            {% endif %}
+        {% else %}
+            <td></td>
+        {% endif%}
+        {% if p.year == team.year|add:"+3" %}
+            {% if p.paying.id == team.abbreviation %}
+                <td align="right">${{p.money|intcomma}}</td>
+            {% else %}
+                <td align="right" style="color:red;">-${{p.money|intcomma}}</td>
+            {% endif %}
+        {% else %}
+            <td></td>
+        {% endif%}
+        {% if p.year == team.year|add:"+4" %}
+            {% if p.paying.id == team.abbreviation %}
+                <td align="right">${{p.money|intcomma}}</td>
+            {% else %}
+                <td align="right" style="color:red;">-${{p.money|intcomma}}</td>
+            {% endif %}
+        {% else %}
+            <td></td>
+        {% endif%}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
