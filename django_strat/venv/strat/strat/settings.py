@@ -81,12 +81,24 @@ WSGI_APPLICATION = 'strat.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'strat.db'),
+#     }
+#}
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'strat.db'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': "strat",
+        'USER': "sparky",
+        'PASSWORD': "password",
+        'HOST': '',
+        'PORT': '',
     }
 }
+
 
 
 # Password validation
