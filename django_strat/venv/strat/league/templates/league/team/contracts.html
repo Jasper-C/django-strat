@@ -26,53 +26,38 @@
     {% endfor %}
     {% for p in payroll %}
     <tr>
-        <td>{{p.note}}</td>
-        <td align="center">{{p.year}}</td>
-        {% if p.year == team.year %}
-            {% if p.paying.id == team.abbreviation %}
-                <td style="align:right;">${{p.money|intcomma}}</td>
-            {% else %}
-                <td style="align:right; color:red;">-${{p.money|intcomma}}</td>
-            {% endif %}
+        <td colspan="2">{{p.notes}}</td>
+        {% if p.adjustments.0 %}
+            <td>${{p.adjustments.0|intcomma}}</td>
         {% else %}
             <td></td>
-        {% endif%}
-        {% if p.year == team.year|add:"+1" %}
-            {% if p.paying.id == team.abbreviation %}
-                <td align="right">${{p.money|intcomma}}</td>
-            {% else %}
-                <td align="right" style="color:red;">-${{p.money|intcomma}}</td>
-            {% endif %}
+        {% endif %}
+        {% if p.adjustments.1 %}
+            <td>${{p.adjustments.1|intcomma}}</td>
         {% else %}
             <td></td>
-        {% endif%}
-        {% if p.year == team.year|add:"+2" %}
-            {% if p.paying.id == team.abbreviation %}
-                <td align="right">${{p.money|intcomma}}</td>
-            {% else %}
-                <td align="right" style="color:red;">-${{p.money|intcomma}}</td>
-            {% endif %}
+        {% endif %}
+        {% if p.adjustments.2 %}
+            <td>${{p.adjustments.2|intcomma}}</td>
         {% else %}
             <td></td>
-        {% endif%}
-        {% if p.year == team.year|add:"+3" %}
-            {% if p.paying.id == team.abbreviation %}
-                <td align="right">${{p.money|intcomma}}</td>
-            {% else %}
-                <td align="right" style="color:red;">-${{p.money|intcomma}}</td>
-            {% endif %}
+        {% endif %}
+        {% if p.adjustments.3 %}
+            <td>${{p.adjustments.3|intcomma}}</td>
         {% else %}
             <td></td>
-        {% endif%}
-        {% if p.year == team.year|add:"+4" %}
-            {% if p.paying.id == team.abbreviation %}
-                <td align="right">${{p.money|intcomma}}</td>
-            {% else %}
-                <td align="right" style="color:red;">-${{p.money|intcomma}}</td>
-            {% endif %}
+        {% endif %}
+        {% if p.adjustments.4 %}
+            <td>${{p.adjustments.4|intcomma}}</td>
         {% else %}
             <td></td>
-        {% endif%}
+        {% endif %}
+        {% if p.adjustments.5 %}
+            <td>${{p.adjustments.5|intcomma}}</td>
+        {% else %}
+            <td></td>
+        {% endif %}
+
     </tr>
     {% endfor %}
 </table>

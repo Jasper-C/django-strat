@@ -1,10 +1,13 @@
 {% extends 'homepage/base.html' %}
 {% load static %}
 {% block content %}
+    {% if last_year in year_list %}
+        <h2><a href="{% url 'league:team_index' last_year %}">Previous Year</a> </h2>
+    {% endif %}
     <h1>{{year}} BAD League Teams</h1>
-    {% for y in year_list %}
-    {{ y }}
-    {% endfor %}
+    {% if next_year in year_list %}
+        <h2><a href="{% url 'league:team_index' next_year %}">Next Year</a> </h2>
+    {% endif %}
     <table border="1">
         <tr>
             <th colspan="2">Team</th>
