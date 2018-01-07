@@ -11,13 +11,15 @@ from league.views.team_helper import collect_payroll_adjustments
 
 class TeamIndex(View):
 
-    def get(self, request, year=timezone.now().year):
-        # if year is None:
-        #     year = timezone.now().year
+    def get(self, request, year=None):
+
+        if year is None:
+            year = timezone.now().year
+
         team_list = Team.objects.filter(year=year).order_by('division', 'location')
         year_list = set(Team.objects.all().values_list("year", flat=True))
-        next_year = year + 1
-        last_year = year - 1
+        next_year = str(int(year) + 1)
+        last_year = str(int(year) - 1)
 
         context = {
             'team_list': team_list,

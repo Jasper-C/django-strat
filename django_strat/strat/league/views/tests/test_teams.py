@@ -1,6 +1,7 @@
 from django.test import TestCase, RequestFactory
 from factories.team_factories import TeamFactory
-from league.views.team import TeamIndex
+from league.models import Team
+from league.views.teams import TeamIndex
 
 
 class TestTeamIndex(TestCase):
@@ -15,7 +16,7 @@ class TestTeamIndex(TestCase):
         year = '2017'
         v = TeamIndex.as_view()
         request_factory = RequestFactory()
-        request = request_factory.get()
+        request = request_factory.get('/league/teams/2017/')
         result = v(request, year)
         self.assertEqual(result.status_code, 200)
 
@@ -27,12 +28,12 @@ class TestTeamIndex(TestCase):
         year = "2018"
         team = TeamFactory(year=2018)
         request_factory = RequestFactory()
-        request = request_factory.get()
+        request = request_factory.get('/league/teams/2017/')
         other_teams = Team.objects.filter(year=2017)
         result = v(request, year)
-        self.assertIn(team.name, result)
+        self.assertIn(team.nickname.encode(), result.content)
         for ot in other_teams:
-            self.assertNotIn(ot.name, result)
+            self.assertNotIn(ot.nickname.encode(), result.content)
 
     def test_check_row_data(self):
         """
@@ -41,6 +42,7 @@ class TestTeamIndex(TestCase):
         year = "2017"
         v = TeamIndex.as_view()
         request_factory = RequestFactory()
-        request = request_factory.get()
+        request = request_factory.get('/league/teams/2017/')
         result = v(request, year)
-        print(result.content)
+        from testvalue import teams
+        self.assertInHTML(teams, result.content.decode("utf-8"))
