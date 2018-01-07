@@ -104,9 +104,9 @@ class Contract(models.Model):
                 return 'FA'
             else:
                 return ''
-
-
-class Card(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    player = models.ForeignKey(Player, on_delete=models.PROTECT)
-    year = models.IntegerField()
+#
+#
+# class Card(models.Model):
+#     id = models.CharField(primary_key=True, max_length=20)
+#     player = models.ForeignKey(Player, on_delete=models.PROTECT)
+#     year = models.IntegerField()

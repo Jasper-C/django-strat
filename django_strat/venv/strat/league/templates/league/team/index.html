@@ -2,6 +2,9 @@
 {% load static %}
 {% block content %}
     <h1>{{year}} BAD League Teams</h1>
+    {% for y in year_list %}
+    {{ y }}
+    {% endfor %}
     <table border="1">
         <tr>
             <th colspan="2">Team</th>

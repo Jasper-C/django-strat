@@ -7,10 +7,26 @@ from league.models.teams import Team, Payroll
 from league.models.players import Player, Contract
 
 
-def team_index(request, year=timezone.now().year):
+class TeamIndex(View):
+
+    def get(self, request, year):
+        if year is None:
+            year = timezone.now().year
+        team_list = Team.objects.filter(year=year).order_by('division', 'location')
+        year_list = set(Team.objects.all().values_list("year", flat=True))
+
+        context = {
+            'team_list': team_list,
+            'year_list': year_list,
+            'year': year,
+        }
+        return render(request, 'league/team/index.html', context)
+
+
+def team_index(request, year):
     team_list = Team.objects.filter(year=year).order_by('division', 'location')
-    # if year is None:
-    #     year = timezone.now().year
+    if year is None:
+        year = timezone.now().year
     context = {
         'team_list': team_list,
         'year': year,

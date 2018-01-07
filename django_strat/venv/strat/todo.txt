@@ -1,0 +1,6 @@
+unittests
+Views
+Postgres
+nginx setup
+built and deploy process
+code restructure
