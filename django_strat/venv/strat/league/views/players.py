@@ -1,16 +1,15 @@
-from django.views import generic
 from django.shortcuts import render, get_object_or_404
-
+from django.views import generic
 from league.models.players import Player
 
 
 class IndexView(generic.ListView):
     template_name = 'league/player/index.html'
     context_object_name = 'player_list'
-    
+
     def get_queryset(self):
         return Player.objects.all()
-    
+
 
 def detail(request, player_id):
     player = get_object_or_404(Player, pk=player_id)
