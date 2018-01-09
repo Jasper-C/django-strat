@@ -1,18 +1,17 @@
-from django.views import View
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
-from django.db.models import Q
+from django.views import View
 
-from league.models.teams import Team, Payroll
-from league.models.players import Player, Contract
-
-from league.views.team_helper import collect_payroll_adjustments
+from league.models.players import Contract
+from league.models.teams import Team
+from league.views.team_helper import collect_payroll_adjustments,\
+    collect_total_payroll, collect_total_adjustments
 
 
 class TeamIndex(View):
+    http_method_names = ['get']
 
     def get(self, request, year=None):
-
         if year is None:
             year = timezone.now().year
 
@@ -58,12 +57,24 @@ def team_detail(request, year, abbreviation):
 def team_contracts(request, year, abbreviation):
     team = get_object_or_404(Team, year=year, abbreviation=abbreviation)
     contracts = Contract.objects.filter(year=year, team=abbreviation)
-    payroll = collect_payroll_adjustments(abbreviation, year)
+    adjustments = collect_payroll_adjustments(abbreviation, year)
+    salary_cap = [135000000, 135000000, 135000000, 135000000, 135000000]
+    total_payroll = collect_total_payroll(contracts)
+    total_adjustments = collect_total_adjustments(adjustments)
+    net_payments = [0, 0, 0, 0, 0]
+    net_remaining = [0, 0, 0, 0, 0]
+    for i in range(5):
+        net_payments[i] = total_payroll[i] + total_adjustments[i]
+        net_remaining[i] = salary_cap[i] - net_payments[i]
     context = {
         'team': team,
         'contracts': contracts,
-        'payroll': payroll,
+        'adjustments': adjustments,
         'contract_list': ['Y1', 'Y2', 'Y3', 'Arb4', 'Arb5', 'Arb6', 'FA'],
-        'salary_cap': [135000000, 135000000, 135000000, 135000000, 135000000, 135000000]
+        'total_payroll': total_payroll,
+        'total_adjustments': total_adjustments,
+        'salary_cap': salary_cap,
+        'net_remaining': net_remaining,
+        'net_payments': net_payments,
     }
     return render(request, 'league/team/contracts.html', context)

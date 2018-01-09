@@ -27,7 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '192.168.1.223',
-    '192.168.1.223', 'localhost',
+    'localhost',
+    '127.0.0.1',
 ]
 
 
@@ -91,9 +92,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': "strat",
-        'USER': "sparky",
+        'USER': "strat_master",
         'PASSWORD': "password",
-        'HOST': '',
+        'HOST': 'localhost',
         'PORT': '',
     }
 }
