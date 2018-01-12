@@ -11,6 +11,6 @@ urlpatterns = [
     path('teams/<int:year>', teams.TeamIndex.as_view(), name='team_index'),
     path('teams/<int:year>/<str:abbreviation>/', teams.team_detail, name='team_detail'),
     path('teams/<int:year>/<str:abbreviation>/stats/', teams.team_detail, name='team_stats'),
-    path('teams/<int:year>/<str:abbreviation>/roster/', teams.team_contracts, name='team_roster'),
-    path('teams/<int:year>/<str:abbreviation>/contracts/', teams.team_contracts, name='team_contracts'),
+    path('teams/<int:year>/<str:abbreviation>/roster/', teams.team_detail, name='team_roster'),
+    path('teams/<int:year>/<str:abbreviation>/contracts/', teams.TeamContracts.as_view(), name='team_contracts'),
     ]

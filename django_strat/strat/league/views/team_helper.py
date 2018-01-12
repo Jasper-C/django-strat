@@ -46,6 +46,7 @@ def collect_total_payroll(contracts):
     total_payroll = [0, 0, 0, 0, 0]
     for c in contracts:
         guaranteed_years = c.length - c.contract_season + 1
+        guaranteed_years = min(guaranteed_years, 5)
         for i in range(guaranteed_years):
             total_payroll[i] += c.salary
     return total_payroll

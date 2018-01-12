@@ -17,8 +17,8 @@ class TeamIndex(View):
 
         team_list = Team.objects.filter(year=year).order_by('division', 'location')
         year_list = set(Team.objects.all().values_list("year", flat=True))
-        next_year = str(int(year) + 1)
-        last_year = str(int(year) - 1)
+        next_year = year + 1
+        last_year = year - 1
 
         context = {
             'team_list': team_list,
@@ -28,17 +28,6 @@ class TeamIndex(View):
             'next_year': next_year,
         }
         return render(request, 'league/team/index.html', context)
-
-
-def team_index(request, year):
-    team_list = Team.objects.filter(year=year).order_by('division', 'location')
-    if year is None:
-        year = timezone.now().year
-    context = {
-        'team_list': team_list,
-        'year': year,
-    }
-    return render(request, 'league/team/index.html', context)
 
 
 def team_detail(request, year, abbreviation):
@@ -54,27 +43,31 @@ def team_detail(request, year, abbreviation):
     return render(request, 'league/team/detail.html', context)
 
 
-def team_contracts(request, year, abbreviation):
-    team = get_object_or_404(Team, year=year, abbreviation=abbreviation)
-    contracts = Contract.objects.filter(year=year, team=abbreviation)
-    adjustments = collect_payroll_adjustments(abbreviation, year)
-    salary_cap = [135000000, 135000000, 135000000, 135000000, 135000000]
-    total_payroll = collect_total_payroll(contracts)
-    total_adjustments = collect_total_adjustments(adjustments)
-    net_payments = [0, 0, 0, 0, 0]
-    net_remaining = [0, 0, 0, 0, 0]
-    for i in range(5):
-        net_payments[i] = total_payroll[i] + total_adjustments[i]
-        net_remaining[i] = salary_cap[i] - net_payments[i]
-    context = {
-        'team': team,
-        'contracts': contracts,
-        'adjustments': adjustments,
-        'contract_list': ['Y1', 'Y2', 'Y3', 'Arb4', 'Arb5', 'Arb6', 'FA'],
-        'total_payroll': total_payroll,
-        'total_adjustments': total_adjustments,
-        'salary_cap': salary_cap,
-        'net_remaining': net_remaining,
-        'net_payments': net_payments,
-    }
-    return render(request, 'league/team/contracts.html', context)
+class TeamContracts(View):
+    http_method_names = ['get']
+
+    def get(self, request, year, abbreviation):
+        team = get_object_or_404(Team, year=year, abbreviation=abbreviation)
+        franchise = team.franchise.id
+        contracts = Contract.objects.filter(year=year, team=franchise)
+        adjustments = collect_payroll_adjustments(franchise, year)
+        total_payroll = collect_total_payroll(contracts)
+        total_adjustments = collect_total_adjustments(adjustments)
+        salary_cap = [135000000, 135000000, 135000000, 135000000, 135000000]
+        net_payments = [0, 0, 0, 0, 0]
+        net_remaining = [0, 0, 0, 0, 0]
+        for i in range(5):
+            net_payments[i] = total_payroll[i] + total_adjustments[i]
+            net_remaining[i] = salary_cap[i] - net_payments[i]
+        context = {
+            'team': team,
+            'contracts': contracts,
+            'adjustments': adjustments,
+            'contract_list': ['Y1', 'Y2', 'Y3', 'Arb4', 'Arb5', 'Arb6', 'FA'],
+            'total_payroll': total_payroll,
+            'total_adjustments': total_adjustments,
+            'salary_cap': salary_cap,
+            'net_remaining': net_remaining,
+            'net_payments': net_payments,
+        }
+        return render(request, 'league/team/contracts.html', context)
