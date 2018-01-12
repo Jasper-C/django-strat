@@ -24,41 +24,75 @@
         <td align="right">{{ p | plus_years:4 }}</td>
     </tr>
     {% endfor %}
-    {% for p in payroll %}
     <tr>
-        <td colspan="2">{{p.notes}}</td>
-        {% if p.adjustments.0 %}
-            <td>${{p.adjustments.0|intcomma}}</td>
+        <td colspan="2"><strong>Total Payroll</strong></td>
+        <td align="right"><strong>${{total_payroll.0|intcomma}}</strong></td>
+        <td align="right"><strong>${{total_payroll.1|intcomma}}</strong></td>
+        <td align="right"><strong>${{total_payroll.2|intcomma}}</strong></td>
+        <td align="right"><strong>${{total_payroll.3|intcomma}}</strong></td>
+        <td align="right"><strong>${{total_payroll.4|intcomma}}</strong></td>
+    </tr>
+    {% for a in adjustments %}
+    <tr>
+        <td colspan="2">{{a.notes}}</td>
+        {% if a.adjustments.0 %}
+            <td align="right">${{a.adjustments.0|intcomma}}</td>
         {% else %}
             <td></td>
         {% endif %}
-        {% if p.adjustments.1 %}
-            <td>${{p.adjustments.1|intcomma}}</td>
+        {% if a.adjustments.1 %}
+            <td align="right">${{a.adjustments.1|intcomma}}</td>
         {% else %}
             <td></td>
         {% endif %}
-        {% if p.adjustments.2 %}
-            <td>${{p.adjustments.2|intcomma}}</td>
+        {% if a.adjustments.2 %}
+            <td align="right">${{a.adjustments.2|intcomma}}</td>
         {% else %}
             <td></td>
         {% endif %}
-        {% if p.adjustments.3 %}
-            <td>${{p.adjustments.3|intcomma}}</td>
+        {% if a.adjustments.3 %}
+            <td align="right">${{a.adjustments.3|intcomma}}</td>
         {% else %}
             <td></td>
         {% endif %}
-        {% if p.adjustments.4 %}
-            <td>${{p.adjustments.4|intcomma}}</td>
+        {% if a.adjustments.4 %}
+            <td align="right">${{a.adjustments.4|intcomma}}</td>
         {% else %}
             <td></td>
         {% endif %}
-        {% if p.adjustments.5 %}
-            <td>${{p.adjustments.5|intcomma}}</td>
-        {% else %}
-            <td></td>
-        {% endif %}
-
     </tr>
     {% endfor %}
+    <tr>
+        <td colspan="2"><strong>Total Adjustments</strong></td>
+        <td align="right"><strong>${{total_adjustments.0|intcomma}}</strong></td>
+        <td align="right"><strong>${{total_adjustments.1|intcomma}}</strong></td>
+        <td align="right"><strong>${{total_adjustments.2|intcomma}}</strong></td>
+        <td align="right"><strong>${{total_adjustments.3|intcomma}}</strong></td>
+        <td align="right"><strong>${{total_adjustments.4|intcomma}}</strong></td>
+    </tr>
+    <tr>
+        <td colspan="2"><strong>Payroll + Adjustments</strong></td>
+        <td align="right"><strong>${{net_payments.0|intcomma}}</strong></td>
+        <td align="right"><strong>${{net_payments.1|intcomma}}</strong></td>
+        <td align="right"><strong>${{net_payments.2|intcomma}}</strong></td>
+        <td align="right"><strong>${{net_payments.3|intcomma}}</strong></td>
+        <td align="right"><strong>${{net_payments.4|intcomma}}</strong></td>
+    </tr>
+    <tr>
+        <td colspan="2"><strong>Salary Cap</strong></td>
+        <td align="right"><strong>${{salary_cap.0|intcomma}}</strong></td>
+        <td align="right"><strong>${{salary_cap.1|intcomma}}</strong></td>
+        <td align="right"><strong>${{salary_cap.2|intcomma}}</strong></td>
+        <td align="right"><strong>${{salary_cap.3|intcomma}}</strong></td>
+        <td align="right"><strong>${{salary_cap.4|intcomma}}</strong></td>
+    </tr>
+    <tr>
+        <td colspan="2"><strong>Total Remaining</strong></td>
+        <td align="right"><strong>${{net_remaining.0|intcomma}}</strong></td>
+        <td align="right"><strong>${{net_remaining.1|intcomma}}</strong></td>
+        <td align="right"><strong>${{net_remaining.2|intcomma}}</strong></td>
+        <td align="right"><strong>${{net_remaining.3|intcomma}}</strong></td>
+        <td align="right"><strong>${{net_remaining.4|intcomma}}</strong></td>
+    </tr>
 </table>
 {% endblock %}
