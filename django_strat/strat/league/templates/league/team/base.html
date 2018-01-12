@@ -15,8 +15,8 @@
     <p><strong>Ballpark:</strong> {{team.ballpark.year}} {{team.ballpark.location}} - {{team.ballpark.name}}</p>
     <p>Singles vs Left: {{team.ballpark.singles_left}} Singles vs Right: {{team.ballpark.singles_right}}</p>
     <p>Home Runs vs Left: {{team.ballpark.homeruns_left}} Home Runs vs Right: {{team.ballpark.homeruns_right}}</p>
-    {% if postseason %}
-        <p><strong>Postseason:</strong></p>
+    {% if header.postseason %}
+        <p><strong>Postseason: NONE YET</strong></p>
     {% endif %}
     <h2><a href="{% url 'league:team_stats' team.year team.abbreviation %}">Statistics</a> |
         <a href="{% url 'league:team_roster' team.year team.abbreviation %}">Roster</a> |

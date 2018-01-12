@@ -59,3 +59,15 @@ def collect_total_adjustments(adjustments):
         for i in range(adjustment_years):
             total_adjustments[i] += a['adjustments'][i]
     return total_adjustments
+
+
+def collect_team_header(team, year):
+    postseason = collect_postseason_data(team, year)
+    header = {
+        'postseason': postseason,
+    }
+    return header
+
+
+def collect_postseason_data(team, year):
+    return None

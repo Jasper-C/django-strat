@@ -5,7 +5,7 @@ from django.views import View
 from league.models.players import Contract
 from league.models.teams import Team
 from league.views.team_helper import collect_payroll_adjustments,\
-    collect_total_payroll, collect_total_adjustments
+    collect_total_payroll, collect_total_adjustments, collect_team_header
 
 
 class TeamIndex(View):
@@ -33,10 +33,11 @@ class TeamIndex(View):
 def team_detail(request, year, abbreviation):
     team = get_object_or_404(Team, year=year, abbreviation=abbreviation)
     roster = Contract.objects.filter(year=year, team=abbreviation)
+    header = collect_team_header(abbreviation, year)
     context = {
         'team': team,
         'roster': roster,
-        'postseason': None,
+        'header': header,
         'hitting_stats': None,
         'pitching_stats': None,
     }
