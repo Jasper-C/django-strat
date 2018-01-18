@@ -1,8 +1,9 @@
-from import_export.admin import ImportExportModelAdmin
 from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin
 
 from .models import Player, Franchise, Team, \
-    Ballpark, Payroll, Contract
+    Ballpark, Payroll, Contract, Arbitration, \
+    DraftPick, Trades, TradePlayer, TradePick, TradeMoney
 
 
 @admin.register(Player)
@@ -79,4 +80,74 @@ class PayrollAdmin(ImportExportModelAdmin):
         'year',
         'money',
         'note'
+    ]
+
+
+@admin.register(Arbitration)
+class ArbitrationAdmin(ImportExportModelAdmin):
+    fields = [
+        'player',
+        'year',
+        'type',
+        'war_sub_0',
+        'war_sub_1',
+        'war_sub_2',
+        'war_sub_3',
+    ]
+
+
+@admin.register(DraftPick)
+class DraftPickAdmin(ImportExportModelAdmin):
+    fields = [
+        'year',
+        'round',
+        'order',
+        'original_team',
+        'owner',
+        'player',
+        'time',
+        'passed',
+    ]
+
+
+@admin.register(Trades)
+class TradesAdmin(ImportExportModelAdmin):
+    fields = [
+        'date',
+        'year',
+        'teams',
+        'notes',
+        'story',
+    ]
+
+
+@admin.register(TradePlayer)
+class TradePlayerAdmin(ImportExportModelAdmin):
+    fields = [
+        'trade',
+        'team_receiving',
+        'team_giving',
+        'player',
+    ]
+
+
+@admin.register(TradePick)
+class TradePickAdmin(ImportExportModelAdmin):
+    fields = [
+        'trade',
+        'team_receiving',
+        'team_giving',
+        'draft_pick',
+    ]
+
+
+@admin.register(TradeMoney)
+class TradeMoneyAdmin(ImportExportModelAdmin):
+    fields = [
+        'trade',
+        'team_receiving',
+        'team_giving',
+        'money',
+        'year',
+        'payroll_note',
     ]

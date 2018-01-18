@@ -17,6 +17,9 @@ class Player(models.Model):
     espn_id = models.CharField(max_length=10)
     fg_id = models.CharField(max_length=10)
 
+    class Meta:
+        ordering = ['last_name', 'first_name']
+
     def __str__(self):
         return '<{}, {}>'.format(self.last_name, self.first_name)
 
@@ -49,6 +52,9 @@ class Contract(models.Model):
     length = models.IntegerField()
     salary = models.IntegerField()
     team = models.ForeignKey('league.Franchise', db_column='team', on_delete=models.PROTECT)
+
+    class Meta:
+        ordering = ['-year', 'player']
 
     def __str__(self):
         return '<{} {}, {} Contract>'.format(self.year, self.player.last_name, self.player.first_name)
@@ -104,9 +110,3 @@ class Contract(models.Model):
                 return 'FA'
             else:
                 return ''
-#
-#
-# class Card(models.Model):
-#     id = models.CharField(primary_key=True, max_length=20)
-#     player = models.ForeignKey(Player, on_delete=models.PROTECT)
-#     year = models.IntegerField()

@@ -1,0 +1,89 @@
+{% extends "./base.html" %}
+
+{% load humanize %}
+{% load players_tags %}
+{% block content %}
+<h2>Players Currently Under Contract for {{header.team.year}}</h2>
+<h3>Total Players on 45 man roster: {{contracts.players_signed}} ({{contracts.open_roster_slots}} spots open)</h3>
+<h3>Total Players on 40 man roster: {{contracts.cards_signed}} ({{contracts.open_carded_slots}} spots open)</h3>
+<h3>Total Salary Cap space remaining: ${{payroll.net_remaining.0|intcomma}}</h3>
+<h3>Renewable Contracts</h3>
+<table>
+    <form>
+    <tr>
+        <th>Player</th>
+        <th>Contract</th>
+        <th>Salary</th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+{% for c in contracts.early_contracts %}
+    <tr>
+        <td><a href="{% url 'league:player_detail' c.player.id %}">
+            {{c.player.last_name}}, {{c.player.first_name}}</a> </td>
+        <td align="center">{{c.type}}</td>
+        <td align="right">${{c.salary|intcomma}}</td>
+        <td><input type="radio" value="keep" name="{{c.player.id}}" checked="checked">Keep</td>
+        <td><input type="radio" value="long_term" name="{{c.player.id}}">Long Term Deal</td>
+        <td><input type="radio" value="non-tender" name="{{c.player.id}}">Non-Tender</td>
+     </tr>
+{% endfor %}
+    <tr>
+        <td colspan="6">Non-Tendered Players go into the draft.</td>
+    </tr>
+</table>
+<h3>Arbitration Eligible Players</h3>
+<table>
+    <tr>
+        <th>Player</th>
+        <th>Contract</th>
+        <th>Minimum Salary</th>
+        <th>Median Salary</th>
+        <th>Maximum Salary</th>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+{% for c in contracts.arbitration_info %}
+    <tr>
+        <td><a href="{% url 'league:player_detail' c.player.id %}">
+            {{c.player.last_name}}, {{c.player.first_name}}</a> </td>
+        <td align="center">{{c.type}}</td>
+        <td align="right">${{c.minimum_contract|intcomma}}</td>
+        <td align="right">${{c.median_contract|intcomma}}</td>
+        <td align="right">${{c.maximum_contract|intcomma}}</td>
+        <td><input type="radio" value="arbitration" name="{{c.player.id}}" checked="checked">Go To Arbitration</td>
+        <td><input type="radio" value="long_term" name="{{c.player.id}}">Long Term Deal</td>
+        <td><input type="radio" value="non_tender" name="{{c.player.id}}">Non-Tender</td>
+    </tr>
+{% endfor %}
+    <tr>
+        <td colspan="8">Non-Tendered Players become free agents.</td>
+    </tr>
+</table>
+<h3>Guarenteed Contracts</h3>
+<table>
+    <tr>
+        <th>Player</th>
+        <th>Contract</th>
+        <th>Salary</th>
+        <th></th>
+        <th></th>
+    </tr>
+{% for c in contracts.guarenteed_contracts %}
+    <tr>
+        <td><a href="{% url 'league:player_detail' c.player.id %}">
+            {{c.player.last_name}}, {{c.player.first_name}}</a> </td>
+        <td align="center">{{c.contract_season}}-{{c.length}}, {{c.type}}</td>
+        <td align="right">${{c.salary|intcomma}}</td>
+        <td><input type="radio" value="keep" name="{{c.player.id}}" checked="checked">Keep</td>
+        <td><input type="radio" value="release" name="{{c.player.id}}">Release</td>
+    </tr>
+{% endfor %}
+</table>
+<p>Released players must be paid for in full, and become free agents if not signed during their waiver period.</p>
+    <input type="submit" value="Approve">
+    <input type="button" value="Cancel">
+    </form>
+{% endblock %}

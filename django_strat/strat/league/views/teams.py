@@ -1,11 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.utils import timezone
 from django.views import View
 
-from league.models.players import Contract
-from league.models.teams import Team
-from league.views.team_helper import collect_payroll_adjustments,\
-    collect_total_payroll, collect_total_adjustments, collect_team_header
+from league.views.team_helper import *
 
 
 class TeamIndex(View):
@@ -31,11 +28,9 @@ class TeamIndex(View):
 
 
 def team_detail(request, year, abbreviation):
-    team = get_object_or_404(Team, year=year, abbreviation=abbreviation)
     roster = Contract.objects.filter(year=year, team=abbreviation)
     header = collect_team_header(abbreviation, year)
     context = {
-        'team': team,
         'roster': roster,
         'header': header,
         'hitting_stats': None,
@@ -48,27 +43,26 @@ class TeamContracts(View):
     http_method_names = ['get']
 
     def get(self, request, year, abbreviation):
-        team = get_object_or_404(Team, year=year, abbreviation=abbreviation)
-        franchise = team.franchise.id
-        contracts = Contract.objects.filter(year=year, team=franchise)
-        adjustments = collect_payroll_adjustments(franchise, year)
-        total_payroll = collect_total_payroll(contracts)
-        total_adjustments = collect_total_adjustments(adjustments)
-        salary_cap = [135000000, 135000000, 135000000, 135000000, 135000000]
-        net_payments = [0, 0, 0, 0, 0]
-        net_remaining = [0, 0, 0, 0, 0]
-        for i in range(5):
-            net_payments[i] = total_payroll[i] + total_adjustments[i]
-            net_remaining[i] = salary_cap[i] - net_payments[i]
+        header = collect_team_header(abbreviation, year)
+        franchise = header['team'].franchise.id
+        payroll = collect_payroll_elements(franchise, year)
         context = {
-            'team': team,
-            'contracts': contracts,
-            'adjustments': adjustments,
+            'header': header,
+            'payroll': payroll,
             'contract_list': ['Y1', 'Y2', 'Y3', 'Arb4', 'Arb5', 'Arb6', 'FA'],
-            'total_payroll': total_payroll,
-            'total_adjustments': total_adjustments,
-            'salary_cap': salary_cap,
-            'net_remaining': net_remaining,
-            'net_payments': net_payments,
         }
         return render(request, 'league/team/contracts.html', context)
+
+
+class TeamOffSeasonContracts(View):
+
+    def get(self, request, year, abbreviation):
+        header = collect_team_header(abbreviation, year)
+        contracts = collect_off_season_contracts(abbreviation, year)
+        payroll = collect_payroll_elements(abbreviation, year)
+        context = {
+            'contracts': contracts,
+            'payroll': payroll,
+            'header': header,
+        }
+        return render(request, 'league/team/off_season_contracts.html', context)

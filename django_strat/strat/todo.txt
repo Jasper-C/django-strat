@@ -1,4 +1,2 @@
-Postgres
-code restructure
 built and deploy process
 nginx setup

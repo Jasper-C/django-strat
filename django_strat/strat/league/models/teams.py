@@ -13,6 +13,9 @@ class Ballpark(models.Model):
     homeruns_left = models.IntegerField()
     homeruns_right = models.IntegerField()
 
+    class Meta:
+        ordering = ['-year', 'location']
+
     def __str__(self):
         return '<{} {} Ballpark>'.format(self.year, self.location)
 
@@ -22,6 +25,9 @@ class Franchise(models.Model):
     owner = models.ForeignKey(User, db_column='current_owner', null=True, on_delete=models.SET_NULL)
     location = models.CharField(max_length=50)
     nickname = models.CharField(max_length=50)
+
+    class Meta:
+        ordering = ['location']
 
     def __str__(self):
         return '<{} {} Franchise>'.format(self.location, self.nickname)
@@ -49,6 +55,9 @@ class Team(models.Model):
     division = models.CharField(max_length=12, choices=division_choices)
     ballpark = models.ForeignKey(Ballpark, db_column='ballpark', on_delete=models.PROTECT)
 
+    class Meta:
+        ordering = ['-year', 'location']
+
     def __str__(self):
         return '<Team: {} {} {}>'.format(self.year, self.location, self.nickname)
 
@@ -56,16 +65,20 @@ class Team(models.Model):
 class Payroll(models.Model):
     receiving = models.ForeignKey(Franchise,
                                   db_column='receiving',
-                                  null=True, related_name='receiving',
+                                  null=True, blank=True,
+                                  related_name='receiving',
                                   on_delete=models.SET_NULL)
     paying = models.ForeignKey(Franchise,
                                db_column='paying',
-                               null=True, related_name='paying',
+                               null=True, blank=True,
+                               related_name='paying',
                                on_delete=models.SET_NULL)
     year = models.IntegerField()
-    # year_created = models.IntegerField()
     money = models.IntegerField()
     note = models.TextField()
+
+    class Meta:
+        ordering = ['year', 'note']
 
     def __str__(self):
         return '<Payroll Adjustment: {} {}>'.format(self.year, self.note)

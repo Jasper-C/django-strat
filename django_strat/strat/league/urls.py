@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import home, players, teams
+from .views import players, teams
 
 app_name = 'league'
 urlpatterns = [
@@ -13,4 +13,6 @@ urlpatterns = [
     path('teams/<int:year>/<str:abbreviation>/stats/', teams.team_detail, name='team_stats'),
     path('teams/<int:year>/<str:abbreviation>/roster/', teams.team_detail, name='team_roster'),
     path('teams/<int:year>/<str:abbreviation>/contracts/', teams.TeamContracts.as_view(), name='team_contracts'),
+    path('teams/<int:year>/<str:abbreviation>/off_season/', teams.TeamOffSeasonContracts.as_view(),
+         name='team_off_season'),
     ]

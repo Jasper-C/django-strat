@@ -2,28 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>{{header.team.year}} {{header.team.location}} {{header.team.nickname}}</title>
 </head>
 <body>
-    <h1>{{team.year}} {{team.location}} {{team.nickname}} Statistics</h1>
+    <h1>{{header.team.year}} {{header.team.location}} {{header.team.nickname}} Statistics</h1>
     <p><strong>Record:</strong>Team Record</p>
     <p><strong>Pythagorean W-L:</strong>Pyth Rec. Runs: XXX Runs Allowed: XXX</p>
-    {% if team.owner is not Null %}
-        <p><strong>Owner:</strong> {{team.owner.first_name}} {{team.owner.last_name}}
-            (<a href="mailto:{{team.owner.email_address}}">email</a>)</p>
+    {% if header.team.owner is not Null %}
+        <p><strong>Owner:</strong> {{header.team.owner.first_name}} {{header.team.owner.last_name}}
+            (<a href="mailto:{{header.team.owner.email_address}}">email</a>)</p>
     {% endif %}
-    <p><strong>Ballpark:</strong> {{team.ballpark.year}} {{team.ballpark.location}} - {{team.ballpark.name}}</p>
-    <p>Singles vs Left: {{team.ballpark.singles_left}} Singles vs Right: {{team.ballpark.singles_right}}</p>
-    <p>Home Runs vs Left: {{team.ballpark.homeruns_left}} Home Runs vs Right: {{team.ballpark.homeruns_right}}</p>
+    <p><strong>Ballpark:</strong> {{header.team.ballpark.year}} {{header.team.ballpark.location}} - {{header.team.ballpark.name}}</p>
+    <p>Singles vs Left: {{header.team.ballpark.singles_left}} Singles vs Right: {{header.team.ballpark.singles_right}}</p>
+    <p>Home Runs vs Left: {{header.team.ballpark.homeruns_left}} Home Runs vs Right: {{header.team.ballpark.homeruns_right}}</p>
     {% if header.postseason %}
         <p><strong>Postseason: NONE YET</strong></p>
     {% endif %}
-    <h2><a href="{% url 'league:team_stats' team.year team.abbreviation %}">Statistics</a> |
-        <a href="{% url 'league:team_roster' team.year team.abbreviation %}">Roster</a> |
-        <a href="{% url 'league:team_contracts' team.year team.abbreviation %}">Contracts</a> |
-        Off-Season |
+    <h2><a href="{% url 'league:team_stats' header.team.year header.team.abbreviation %}">Statistics</a> |
+        <a href="{% url 'league:team_roster' header.team.year header.team.abbreviation %}">Roster</a> |
+        <a href="{% url 'league:team_contracts' header.team.year header.team.abbreviation %}">Contracts</a> |
+        <a href="{% url 'league:team_off_season' header.team.year header.team.abbreviation %}">Off Season</a> |
         Draft Results |
-        {{team.year|add:"+1"}} Draft Picks </h2>
+        {{header.team.year|add:"+1"}} Draft Picks </h2>
     {% block content %}
     {% endblock %}
 </body>
