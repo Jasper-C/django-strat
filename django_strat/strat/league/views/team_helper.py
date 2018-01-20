@@ -101,8 +101,6 @@ def collect_off_season_contracts(team, year):
         elif c.type in arbitration_contracts:
             arbitration_contract_list.append(c)
             arb = get_object_or_404(Arbitration, year=year, player=c.player)
-            print('New')
-            print(arb)
             arbitration_info.append(arb)
         else:
             guarenteed_contract_list.append(c)

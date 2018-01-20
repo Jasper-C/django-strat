@@ -2,7 +2,7 @@ from decimal import *
 
 from django.db import models
 
-from .players import Player
+from .players import Player, Contract
 from .teams import Franchise
 
 
@@ -14,6 +14,25 @@ class Arbitration(models.Model):
     war_sub_1 = models.DecimalField(max_digits=3, decimal_places=1)
     war_sub_2 = models.DecimalField(max_digits=3, decimal_places=1)
     war_sub_3 = models.DecimalField(max_digits=3, decimal_places=1)
+
+    def minimum_contract_value(self):
+        min_contract = 0
+        if self.type == 'Arb4':
+            min_contract = 850000
+        elif self.type == 'Arb5':
+            min_contract = 1000000
+            previous_contract = Contract.objects.filter(year=int(self.year)-1, player=self.player)
+            salary = previous_contract[0].salary
+            if salary > min_contract:
+                min_contract = salary
+        elif self.type == 'Arb6':
+            min_contract = 1250000
+            previous_contract = Contract.objects.filter(year=int(self.year)-1, player=self.player)
+            salary = previous_contract[0].salary
+            if salary > min_contract:
+                min_contract = salary
+        return min_contract
+    # TODO: Find previous contract and insert into minimum contract
 
     class Meta:
         ordering = ['-year', 'player']
@@ -31,75 +50,72 @@ class Arbitration(models.Model):
         war = war * Decimal('1250000')
         return war
 
-    min_contracts = [Decimal('850000'), Decimal('1000000'), Decimal('1250000')]
-    # TODO: Find previous contract and insert into minimum contract
-
     def minimum_contract(self):
         if self.type == 'Arb4':
             min_value = self.war_value() * Decimal('0.638')
-            min_value = int(round(float(min_value) / 25000.0) *25000.0)
-            if min_value < self.min_contracts[0]:
-                return self.min_contracts[0]
+            min_value = int(round(float(min_value) / 25000.0) * 25000.0)
+            if min_value < self.minimum_contract_value():
+                return self.minimum_contract_value()
             else:
                 return min_value
         elif self.type == 'Arb5':
             min_value = self.war_value() * Decimal('0.788')
-            min_value = int(round(float(min_value) / 25000.0) *25000.0)
-            if min_value < self.min_contracts[1]:
-                return self.min_contracts[1]
+            min_value = int(round(float(min_value) / 25000.0) * 25000.0)
+            if min_value < self.minimum_contract_value():
+                return self.minimum_contract_value()
             else:
                 return min_value
         elif self.type == 'Arb6':
             min_value = self.war_value() * Decimal('1.038')
-            min_value = int(round(float(min_value) / 25000.0) *25000.0)
-            if min_value < self.min_contracts[2]:
-                return self.min_contracts[2]
+            min_value = int(round(float(min_value) / 25000.0) * 25000.0)
+            if min_value < self.minimum_contract_value():
+                return self.minimum_contract_value()
             else:
                 return min_value
 
     def median_contract(self):
         if self.type == 'Arb4':
             min_value = self.war_value() * Decimal('0.850')
-            min_value = int(round(float(min_value) / 25000.0) *25000.0)
-            if min_value < self.min_contracts[0]:
-                return self.min_contracts[0]
+            min_value = int(round(float(min_value) / 25000.0) * 25000.0)
+            if min_value < self.minimum_contract_value():
+                return self.minimum_contract_value()
             else:
                 return min_value
         elif self.type == 'Arb5':
             min_value = self.war_value() * Decimal('1.000')
-            min_value = int(round(float(min_value) / 25000.0) *25000.0)
-            if min_value < self.min_contracts[1]:
-                return self.min_contracts[1]
+            min_value = int(round(float(min_value) / 25000.0) * 25000.0)
+            if min_value < self.minimum_contract_value():
+                return self.minimum_contract_value()
             else:
                 return min_value
         elif self.type == 'Arb6':
             min_value = self.war_value() * Decimal('1.250')
-            min_value = int(round(float(min_value) / 25000.0) *25000.0)
-            if min_value < self.min_contracts[2]:
-                return self.min_contracts[2]
+            min_value = int(round(float(min_value) / 25000.0) * 25000.0)
+            if min_value < self.minimum_contract_value():
+                return self.minimum_contract_value()
             else:
                 return min_value
 
     def maximum_contract(self):
         if self.type == 'Arb4':
             min_value = self.war_value() * Decimal('1.062')
-            min_value = int(round(float(min_value) / 25000.0) *25000.0)
-            if min_value < self.min_contracts[0]:
-                return self.min_contracts[0]
+            min_value = int(round(float(min_value) / 25000.0) * 25000.0)
+            if min_value < self.minimum_contract_value():
+                return self.minimum_contract_value()
             else:
                 return min_value
         elif self.type == 'Arb5':
             min_value = self.war_value() * Decimal('1.212')
-            min_value = int(round(float(min_value) / 25000.0) *25000.0)
-            if min_value < self.min_contracts[1]:
-                return self.min_contracts[1]
+            min_value = int(round(float(min_value) / 25000.0) * 25000.0)
+            if min_value < self.minimum_contract_value():
+                return self.minimum_contract_value()
             else:
                 return min_value
         elif self.type == 'Arb6':
             min_value = self.war_value() * Decimal('1.462')
-            min_value = int(round(float(min_value) / 25000.0) *25000.0)
-            if min_value < self.min_contracts[2]:
-                return self.min_contracts[2]
+            min_value = int(round(float(min_value) / 25000.0) * 25000.0)
+            if min_value < self.minimum_contract_value():
+                return self.minimum_contract_value()
             else:
                 return min_value
 

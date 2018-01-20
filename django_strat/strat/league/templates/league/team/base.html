@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+{% extends 'homepage/base.html' %}
+{% load static %}
     <title>{{header.team.year}} {{header.team.location}} {{header.team.nickname}}</title>
-</head>
+{% block header %}
+{% endblock %}
 <body>
     <h1>{{header.team.year}} {{header.team.location}} {{header.team.nickname}} Statistics</h1>
     <p><strong>Record:</strong>Team Record</p>
@@ -27,4 +26,3 @@
     {% block content %}
     {% endblock %}
 </body>
-</html>
