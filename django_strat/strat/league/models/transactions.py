@@ -123,7 +123,7 @@ class Arbitration(models.Model):
 class DraftPick(models.Model):
     year = models.IntegerField()
     round = models.IntegerField()
-    order = models.IntegerField(null=True, verbose_name="Order in Round")
+    order = models.IntegerField(null=True, blank=True, verbose_name="Order in Round")
     original_team = models.ForeignKey(Franchise,
                                       related_name='original',
                                       on_delete=models.PROTECT)
@@ -132,22 +132,29 @@ class DraftPick(models.Model):
                               related_name='pick_owner',
                               on_delete=models.PROTECT)
     player = models.ForeignKey(Player,
-                               null=True,
+                               null=True, blank=True,
                                verbose_name="Player Selected",
                                on_delete=models.PROTECT)
-    time = models.DateTimeField(null=True, verbose_name="Date/Time Selected")
+    time = models.DateTimeField(null=True, blank=True,
+                                verbose_name="Date/Time Selected")
     passed = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-year', 'order', 'round']
+
+    def toOrdinalNum(self):
+        return str(self.round) + {1: 'st', 2: 'nd', 3: 'rd'}.get(4 if 10 <= int(self.round) % 100 < 20 else int(self.round) % 10, "th")
+
+    def __str__(self):
+        return "{}'s {} round pick-{}".format(self.original_team.location, self.toOrdinalNum(), self.year)
 
 
 class Trades(models.Model):
     date = models.DateTimeField()
     year = models.IntegerField(verbose_name="League Season")
     teams = models.ManyToManyField(Franchise)
-    notes = models.TextField(null=True)
-    story = models.TextField(null=True)
+    notes = models.TextField(null=True, blank=True)
+    story = models.TextField(null=True, blank=True)
 
 
 class TradePart(models.Model):

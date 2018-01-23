@@ -1,10 +1,11 @@
 {% extends "./base.html" %}
+
+{% block page_title %}
+    <title>{{header.team.year}} {{header.team.location}} {{header.team.nickname}}-Detail</title>
+{% endblock page_title %}
+
 {% block content %}
     {% for player in roster %}
-        <h3>player:{{player}}</h3>
+        <h3>{{player}}</h3>
     {% endfor %}
-    <h2>Team Batting</h2>
-    <h3>Batting Table</h3>
-    <h2>Team Pitching</h2>
-    <h3>Pitching Table</h3>
-{% endblock %}
+{% endblock content %}

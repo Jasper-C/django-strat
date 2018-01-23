@@ -20,7 +20,11 @@
                 <td><img src="{% static "league/" %}{{year}}{{team.abbreviation}}.jpg"
                     alt="{{team.location}} {{team.nickname}} Logo"/> </td>
                 <td><a href="{% url 'league:team_detail' year team.abbreviation %}">{{team.location}} {{team.nickname}}</a></td>
-                <td><a href="mailto:{{team.owner.email}}">{{team.owner.first_name}} {{team.owner.last_name}}</a> </td>
+                {% if user %}
+                    <td><a href="mailto:{{team.owner.email}}">{{team.owner.first_name}} {{team.owner.last_name}}</a> </td>
+                {% else %}
+                    <td>{{team.owner.first_name}} {{team.owner.last_name}}</td>
+                {% endif %}
                 <td>{{team.ballpark.year}} {{team.ballpark.location}}</td>
                 <td>{{team.get_division_display}}</td>
             </tr>

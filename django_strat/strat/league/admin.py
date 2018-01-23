@@ -29,7 +29,8 @@ class ContractAdmin(ImportExportModelAdmin):
         'year',
         'contract_season',
         'length',
-        'salary'
+        'salary',
+        'team'
     ]
 
 

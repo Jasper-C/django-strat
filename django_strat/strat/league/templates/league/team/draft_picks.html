@@ -1,0 +1,9 @@
+{% extends './base.html' %}
+
+{% block content %}
+    <ul>
+        {% for d in draft_picks %}
+            <li>{{d}}</li>
+        {% endfor %}
+    </ul>
+{% endblock content %}

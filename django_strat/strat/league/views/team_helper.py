@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 
 from league.models.players import Contract
 from league.models.teams import Payroll, Team
-from league.models.transactions import Arbitration
+from league.models.transactions import Arbitration, DraftPick
 
 
 def collect_payroll_adjustments(franchise, year):
@@ -139,3 +139,9 @@ def collect_payroll_elements(team, year):
         'net_payments': net_payments,
     }
     return payroll
+
+
+def collect_draft_pick_list(team, year):
+    draft_picks = DraftPick.objects.filter(year=year, owner=team).order_by('round', 'order')
+    print(draft_picks)
+    return draft_picks

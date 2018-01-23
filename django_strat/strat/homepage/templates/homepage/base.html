@@ -7,40 +7,46 @@
     <link rel="stylesheet" type="text/css"
           href="{% static 'base.css' %}" />
     {% block page_title %}
-    <title>BAD League</title>
+        <title>BAD League</title>
     {% endblock page_title %}
 </head>
 <body>
-{% block header %}
-    <header>
-        <img src="{% static 'BAD_logo.jpg'%}"
-             alt="BAD League Logo"/>
-        <h1>Building A Dynasty Strat-O-Matic League</h1>
-    </header>
-{% endblock header%}
-{% block login %}
-    {% if user %}
-        <h3>Welcome {{user.first_name}}</h3>
-    {% else %}
-        <h3>No one logged in.</h3>
-    {% endif %}
-{% endblock login %}
-{% block site_navigation %}
-    <nav>
-        <h2><a href="{% url 'homepage:home' %}">Home</a> |
-            News |
-            Schedule |
-            Standings |
-            <a href="{% url 'league:team_index' %}">Teams</a> |
-            <a href="{% url 'league:player_index' %}">Players</a> |
-            Transactions |
-            Draft |
-            Free Agency |
-            Statistics</h2>
-    </nav>
-{% endblock site_navigation %}
-{% block content %}
-    <p>No content displayed here, please contact the site admin if you believe this is an error.</p>
-{% endblock content %}
+    {% block header %}
+        <header>
+            <img src="{% static 'BAD_logo.jpg'%}"
+                 alt="BAD League Logo"/>
+            <h1>Building A Dynasty Strat-O-Matic League</h1>
+        </header>
+    {% endblock header %}
+    {% block login %}
+        {% if user %}
+            <h4>Welcome {{user.first_name}} <a href="{% url 'logout' %}">Logout</a></h4>
+        {% else %}
+            <h4><a href="{% url 'login' %}">Log In</a></h4>
+        {% endif %}
+    {% endblock login %}
+    {% block site_navigation %}
+        <nav>
+            <h2>
+                <a href="{% url 'homepage:home' %}">Home</a> |
+                News |
+                Schedule |
+                Standings |
+                Statistics |
+                <a href="{% url 'league:team_index' %}">Teams</a> |
+                <a href="{% url 'league:player_index' %}">Players</a> |
+                <a href="{% url 'league:trades_index' %}">Transactions</a> |
+                <a href="{% url 'league:draft_picks' %}">Draft</a> |
+                Free Agency
+            </h2>
+        </nav>
+    {% endblock site_navigation %}
+    {% block part_header %}
+    {% endblock part_header %}
+    {% block part_navigation %}
+    {% endblock part_navigation %}
+    {% block content %}
+        <p>No content displayed here, please contact the site admin if you believe this is an error.</p>
+    {% endblock content %}
 </body>
 </html>

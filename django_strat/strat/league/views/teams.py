@@ -10,6 +10,7 @@ class TeamIndex(View):
 
     def get(self, request, year=None):
         if year is None:
+
             year = timezone.now().year
 
         team_list = Team.objects.filter(year=year).order_by('division', 'location')
@@ -66,3 +67,13 @@ class TeamOffSeasonContracts(View):
             'header': header,
         }
         return render(request, 'league/team/off_season_contracts.html', context)
+
+
+class TeamDraftPickList(View):
+
+    def get(self, request, year, abbreviation):
+        context = {
+            'header': collect_team_header(abbreviation, year),
+            'draft_picks': collect_draft_pick_list(abbreviation, year),
+        }
+        return render(request, 'league/team/draft_picks.html', context)

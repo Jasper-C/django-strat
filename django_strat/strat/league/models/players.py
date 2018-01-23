@@ -21,7 +21,7 @@ class Player(models.Model):
         ordering = ['last_name', 'first_name']
 
     def __str__(self):
-        return '<{}, {}>'.format(self.last_name, self.first_name)
+        return '{}, {}'.format(self.last_name, self.first_name)
 
     def batting_hand(self):
         if self.bats.lower() == 'l':
@@ -57,7 +57,7 @@ class Contract(models.Model):
         ordering = ['-year', 'player']
 
     def __str__(self):
-        return '<{} {}, {} Contract>'.format(self.year, self.player.last_name, self.player.first_name)
+        return '{}, {} - {} Contract'.format(self.player.last_name, self.player.first_name, self.year)
 
     contract_advance = {
         0: 'AA',
@@ -94,10 +94,10 @@ class Contract(models.Model):
                 contract += self.type + ', '
             else:
                 contract += '{}-{} {}, '.format(self.contract_season, self.length, self.type)
-            if self.salary >= 1000000:
-                contract += '${:.2f}M'.format(self.salary/1000000)
+            if int(self.salary) >= 1000000:
+                contract += '${:.2f}M'.format(int(self.salary)/1000000)
             else:
-                contract += '${:.0f}k'.format(self.salary/1000)
+                contract += '${:.0f}k'.format(int(self.salary)/1000)
         return contract
 
     def plus(self, yrs):

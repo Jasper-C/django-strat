@@ -17,7 +17,7 @@ class Ballpark(models.Model):
         ordering = ['-year', 'location']
 
     def __str__(self):
-        return '<{} {} Ballpark>'.format(self.year, self.location)
+        return '{} {} Ballpark'.format(self.year, self.location)
 
 
 class Franchise(models.Model):
@@ -30,7 +30,7 @@ class Franchise(models.Model):
         ordering = ['location']
 
     def __str__(self):
-        return '<{} {} Franchise>'.format(self.location, self.nickname)
+        return '{} {} Franchise'.format(self.location, self.nickname)
 
 
 class Team(models.Model):

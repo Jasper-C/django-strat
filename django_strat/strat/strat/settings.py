@@ -70,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'strat.context_processor.current_user'
             ],
         },
     },
@@ -144,7 +145,6 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-    'home/jasper/PycharmProjects/django/venv/strat/static',
 ]
 
 FIXTURE_DIRS = [

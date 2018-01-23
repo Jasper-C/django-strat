@@ -1,0 +1,15 @@
+{% extends 'homepage/base.html' %}
+
+{% block content %}
+<h1>Draft Pick Listing</h1>
+    {% for t in teams %}
+        <h2>{{t.location}} {{t.nickname}}</h2>
+        <ul>
+            {% for d in draft_picks %}
+                {% if d.owner == t.franchise %}
+                    <li>{{d}}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endfor %}
+{% endblock %}
