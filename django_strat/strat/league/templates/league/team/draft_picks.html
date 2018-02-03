@@ -1,9 +1,10 @@
 {% extends './base.html' %}
+{% load humanize %}
 
 {% block content %}
     <ul>
         {% for d in draft_picks %}
-            <li>{{d}}</li>
+            <li>{{d.pick.original_team.location}}'s {{d.pick.round | ordinal}} round pick ({{d.number}})</li>
         {% endfor %}
     </ul>
 {% endblock content %}

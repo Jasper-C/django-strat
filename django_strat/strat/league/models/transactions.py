@@ -1,6 +1,8 @@
 from decimal import *
 
+from django.contrib.auth import get_user_model as User
 from django.db import models
+from django.utils import timezone
 
 from .players import Player, Contract
 from .teams import Franchise
@@ -180,3 +182,74 @@ class TradeMoney(TradePart):
     money = models.IntegerField()
     year = models.IntegerField(verbose_name='Effective In Year')
     payroll_note = models.TextField()
+
+
+class AvailableDraftPick(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.PROTECT)
+    year = models.IntegerField()
+    contract = models.CharField(max_length=4)
+    salary = models.IntegerField()
+
+    class Meta:
+        ordering = ['-year', 'player']
+
+    def __str__(self):
+        return '{}, {}-Draft Pick'.format(self.player.last_name,
+                                          self.player.first_name)
+
+
+class AvailableFreeAgent(models.Model):
+    player = models.ForeignKey(Player, on_delete=models.PROTECT)
+    year = models.IntegerField()
+    bid_time_stamp = models.DateTimeField(null=True, blank=True)
+    bid_team = models.ForeignKey(Franchise, on_delete=models.PROTECT, null=True, blank=True)
+    bid_length = models.IntegerField(null=True, blank=True)
+    bid_salary = models.IntegerField(null=True, blank=True)
+    auction_starts = models.DateTimeField(null=True, blank=True)
+    auction_ends = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-year', 'player']
+
+    def __str__(self):
+        return '{}, {}-Free Agent'.format(self.player.last_name, self.player.first_name)
+
+    def bid_value(self):
+        if self.bid_time_stamp is None:
+            return None
+        else:
+            multiplier = [0, Decimal('1.00'), Decimal('1.55'), Decimal('1.90'), Decimal('2.20'),
+                          Decimal('2.45'), Decimal('2.65'), Decimal('2.80')]
+            value = multiplier[int(str(self.bid_length))] * self.bid_salary
+            return int(value)
+
+    def auction_in_progress(self):
+        if timezone.now() < self.auction_starts:
+            return False
+        elif timezone.now() > self.auction_ends:
+            return False
+        else:
+            return True
+
+
+class FreeAgentBid(models.Model):
+    free_agent = models.ForeignKey(AvailableFreeAgent, on_delete=models.CASCADE)
+    bid_time_stamp = models.DateTimeField()
+    bid_team = models.ForeignKey(Franchise, on_delete=models.PROTECT)
+    bid_length = models.IntegerField()
+    bid_salary = models.IntegerField()
+    user = models.ForeignKey(User(), on_delete=models.PROTECT)
+
+    class Meta:
+        ordering = ['free_agent', '-bid_time_stamp']
+
+    def __str__(self):
+        return '{}, {}-{}-Free Agent Bid'.format(self.free_agent.last_name,
+                                                 self.free_agent.first_name,
+                                                 self.bid_time_stamp)
+
+    def is_high_bid(self):
+        if self.bid_time_stamp == self.free_agent.bid_time_stamp:
+            return True
+        else:
+            return False

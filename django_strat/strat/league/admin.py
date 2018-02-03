@@ -3,7 +3,9 @@ from import_export.admin import ImportExportModelAdmin
 
 from .models import Player, Franchise, Team, \
     Ballpark, Payroll, Contract, Arbitration, \
-    DraftPick, Trades, TradePlayer, TradePick, TradeMoney
+    DraftPick, Trades, TradePlayer, TradePick, TradeMoney, \
+    AvailableDraftPick, AvailableFreeAgent, FreeAgentBid, \
+    HitterCardStats, PitcherCardStats
 
 
 @admin.register(Player)
@@ -152,3 +154,48 @@ class TradeMoneyAdmin(ImportExportModelAdmin):
         'year',
         'payroll_note',
     ]
+
+
+@admin.register(AvailableDraftPick)
+class AvailableDraftPickAdmin(ImportExportModelAdmin):
+    fields = [
+        'player',
+        'year',
+        'contract',
+        'salary'
+    ]
+
+
+@admin.register(AvailableFreeAgent)
+class AvailableFreeAgentAdmin(ImportExportModelAdmin):
+    fields = [
+        'player',
+        'year',
+        'bid_time_stamp',
+        'bid_team',
+        'bid_length',
+        'bid_salary',
+        'auction_starts',
+        'auction_ends'
+    ]
+
+
+@admin.register(FreeAgentBid)
+class FreeAgentBidAdmin(ImportExportModelAdmin):
+    fields = [
+        'free_agent',
+        'bid_time_stamp',
+        'bid_team',
+        'bid_length',
+        'bid_salary',
+    ]
+
+
+@admin.register(HitterCardStats)
+class HitterCardStatsAdmin(ImportExportModelAdmin):
+    fields = []
+
+
+@admin.register(PitcherCardStats)
+class PitcherCardStatsAdmin(ImportExportModelAdmin):
+    fields = []

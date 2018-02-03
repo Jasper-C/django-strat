@@ -1,3 +1,5 @@
 -r requirments.txt 
 factory-boy
 ipython
+requests
+beautifulsoup4

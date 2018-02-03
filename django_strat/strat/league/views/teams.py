@@ -13,7 +13,7 @@ class TeamIndex(View):
 
             year = timezone.now().year
 
-        team_list = Team.objects.filter(year=year).order_by('division', 'location')
+        team_list = collect_team_list_info(year)
         year_list = set(Team.objects.all().values_list("year", flat=True))
         next_year = year + 1
         last_year = year - 1
@@ -72,8 +72,26 @@ class TeamOffSeasonContracts(View):
 class TeamDraftPickList(View):
 
     def get(self, request, year, abbreviation):
+        draft_picks = collect_draft_pick_list(abbreviation, year)
         context = {
             'header': collect_team_header(abbreviation, year),
-            'draft_picks': collect_draft_pick_list(abbreviation, year),
+            'draft_picks': draft_picks,
         }
         return render(request, 'league/team/draft_picks.html', context)
+
+
+class TeamRoster(View):
+    http_method_names = ['get']
+
+    def get(self, request, year, abbreviation):
+        header = collect_team_header(abbreviation, year)
+        franchise = header['team'].franchise.id
+        collect = collect_team_roster(franchise, year)
+        context = {
+            'header': header,
+            'roster': collect['roster'],
+            'hitters_card_stats': collect['hitters_card_stats'],
+            'pitchers_card_stats': collect['pitchers_card_stats'],
+            'uncarded': collect['uncarded'],
+        }
+        return render(request, 'league/team/roster.html', context)

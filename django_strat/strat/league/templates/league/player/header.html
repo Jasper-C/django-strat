@@ -1,0 +1,83 @@
+<h1 class="head">{{player.first_name}} {{player.last_name}}</h1>
+<p class="head"><strong>Position: </strong>{{positions}}</p>
+<p class="head"><strong>Bats: </strong>{{bats}} <strong>Throws: </strong>{{throws}}</p>
+<p class="head"><strong>Team: </strong>{{teams}}</p>
+<p class="head"><strong>Links: </strong>
+    <a href="http://baseball-reference.com/players/{{player.bbref_id|slice:"0:1"}}/{{player.bbref_id}}.shtml">Baseball-Reference</a> |
+    <a href="http://m.mlb.com/player/{{player.mlb_id}}">MLB.com</a> |
+    <a href="http://legacy.baseballprospectus.com/card/{{player.bp_id}}/">Baseball Prospectus</a> |
+    <a href="http://www.cbssports.com/mlb/players/playerpage/{{player.cbs_id}}">CBS.com</a> |
+    <a href="http://www.espn.com/mlb/player/_/id/{{player.espn_id}}">ESPN.com</a>
+</p>
+<p class="head"><strong>Contract Status: </strong>Free Agent</p>
+{% if player.player_type in 'hx' %}
+    <table class="summary">
+        <tr>
+            <th class="summary_header">SUMMARY</th>
+            <th class="summary">WAR</th>
+            <th class="summary">AB</th>
+            <th class="summary">R</th>
+            <th class="summary">H</th>
+            <th class="summary">AVG</th>
+            <th class="summary">HR</th>
+            <th class="summary">RBI</th>
+            <th class="summary">SB</th>
+        </tr>
+        <tr>
+            <td class="summary_header">2017</td>
+            <td class="summary">1.1</td>
+            <td class="summary">324</td>
+            <td class="summary">43</td>
+            <td class="summary">94</td>
+            <td class="summary">.290</td>
+            <td class="summary">5</td>
+            <td class="summary">32</td>
+            <td class="summary">7</td>
+        </tr>
+        <tr>
+            <td class="summary_header">Career</td>
+            <td class="summary">1.9</td>
+            <td class="summary">671</td>
+            <td class="summary">79</td>
+            <td class="summary">175</td>
+            <td class="summary">.261</td>
+            <td class="summary">7</td>
+            <td class="summary">64</td>
+            <td class="summary">7</td>
+        </tr>
+    </table>
+{% endif %}
+{% if player.player_type in 'px' %}
+    <table class="summary">
+        <tr>
+            <th class="summary_header">SUMMARY</th>
+            <th class="summary">WAR</th>
+            <th class="summary">W</th>
+            <th class="summary">L</th>
+            <th class="summary">ERA</th>
+            <th class="summary">G</th>
+            <th class="summary">GS</th>
+            <th class="summary">SV</th>
+        </tr>
+        <tr>
+            <td class="summary_header">2017</td>
+            <td class="summary">-0.2</td>
+            <td class="summary">11</td>
+            <td class="summary">17</td>
+            <td class="summary">4.65</td>
+            <td class="summary">33</td>
+            <td class="summary">33</td>
+            <td class="summary">0</td>
+        </tr>
+        <tr>
+            <td class="summary_header">Career</td>
+            <td class="summary">16.2</td>
+            <td class="summary">118</td>
+            <td class="summary">99</td>
+            <td class="summary">4.25</td>
+            <td class="summary">278</td>
+            <td class="summary">274</td>
+            <td class="summary">0</td>
+        </tr>
+    </table>
+{% endif %}

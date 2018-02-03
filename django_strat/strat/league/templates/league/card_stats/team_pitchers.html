@@ -1,0 +1,71 @@
+<h2></h2>
+<table>
+    <tr>
+        <th>Player</th>
+        <th class="left">H</th>
+        <th class="left">OB</th>
+        <th class="left">TB</th>
+        <th class="left">HR</th>
+        <th class="left">BP</th>
+        <th class="left">gbA</th>
+        <th class="right">H</th>
+        <th class="right">OB</th>
+        <th class="right">TB</th>
+        <th class="right">HR</th>
+        <th class="right">BP</th>
+        <th class="right">Cl</th>
+        <th>S</th>
+        <th>R</th>
+        <th>C</th>
+        <th>Hld</th>
+        <th>WP</th>
+        <th>Bk</th>
+        <th>Def.</th>
+        <th>PHC</th>
+        <td>Run</td>
+        <th>Stealing</th>
+    </tr>
+    {% for x in pitchers_card_stats %}
+    <tr>
+        <td>{{x.player}}</td>
+        <td class="card_left">{{x.h_l}}</td>
+        <td class="card_left">{{x.ob_l}}</td>
+        <td class="card_left">{{x.tb_l}}</td>
+        <td class="card_left">{{x.hr_l}}</td>
+        <td class="card_left">{{x.bp_l}}</td>
+        <td class="card_left">{{x.gba_l}}</td>
+        <td class="card_right">{{x.h_r}}</td>
+        <td class="card_right">{{x.ob_r}}</td>
+        <td class="card_right">{{x.tb_r}}</td>
+        <td class="card_right">{{x.hr_r}}</td>
+        <td class="card_right">{{x.bp_r}}</td>
+        <td class="card_right">{{x.gba_r}}</td>
+        <td align="center">
+            {% if x.starter_endurance %}
+            {{x.starter_endurance}}
+            {% endif %}
+        </td>
+        <td align="center">
+            {% if x.relief_endurance %}
+            {{x.relief_endurance}}
+            {% endif %}
+        </td>
+        <td align="center">
+            {% if x.closer_rating != None %}
+                {% if x.closer_rating == -1 %}
+                    N
+                {% else %}
+                    {{x.closer_rating}}
+                {% endif %}
+            {% endif %}
+        </td>
+        <td align="right">{{x.hold_rating}}</td>
+        <td align="right">{{x.wild_pitch}}</td>
+        <td align="right">{{x.balk}}</td>
+        <td align="right">{{x.def_range}}e{{x.def_error}}</td>
+        <td align="center">{{x.phc}}</td>
+        <td align="right">{{x.running}}</td>
+        <td align="center">{{x.stealing}}</td>
+    </tr>
+    {% endfor %}
+</table>

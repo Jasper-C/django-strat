@@ -1,6 +1,8 @@
-
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'homepage/base.html' %}
+{% block page_title %}
+    <title>{{player.first_name}} {{player.last_name}} Player Page</title>
+{% endblock %}
+{% block content%}
 <style>
     h1.head {
         font-size: 1.5em;
@@ -41,139 +43,51 @@
         border-width: 2px 0 2px 0;
         border-style: solid;
         border-color: #747697;
-
     }
+    table {
+        border-collapse: collapse;
+    }
+    .left {
+        background-color: LightBlue;
+    }
+    .right {
+        background-color: Pink;
+    }
+    td.left, td.right {
+        text-align: right;
+    }
+
 </style>
-<head>
-    <meta charset="UTF-8">
-    <title>{{player.first_name}} {{player.last_name}} Player Page</title>
-</head>
-<body>
-    <h1 class="head">{{player.first_name}} {{player.last_name}}</h1>
-    <p class="head"><strong>Position: </strong>Positions Played</p>
-    <p class="head"><strong>Bats: </strong>{{bats}} <strong>Throws: </strong>{{throws}}</p>
-    <p class="head"><strong>Team: </strong>Teams Played For</p>
-    <p class="head"><strong>Links: </strong>
-        <a href="http://baseball-reference.com/players/{{player.bbref_id|slice:"0:1"}}/{{player.bbref_id}}.shtml">Baseball-Reference</a> |
-        <a href="http://m.mlb.com/player/{{player.mlb_id}}">MLB.com</a> |
-        <a href="http://legacy.baseballprospectus.com/card/{{player.bp_id}}/">Baseball Prospectus</a> |
-        <a href="http://www.cbssports.com/mlb/players/playerpage/{{player.cbs_id}}">CBS.com</a> |
-        <a href="http://www.espn.com/mlb/player/_/id/{{player.espn_id}}">ESPN.com</a>
-    </p>
-    <p class="head"><strong>Contract Status: </strong>Free Agent</p>
-    {% if player.player_type in 'hx' %}
-        <table class="summary">
-            <tr>
-                <th class="summary_header">SUMMARY</th>
-                <th class="summary">WAR</th>
-                <th class="summary">AB</th>
-                <th class="summary">R</th>
-                <th class="summary">H</th>
-                <th class="summary">AVG</th>
-                <th class="summary">HR</th>
-                <th class="summary">RBI</th>
-                <th class="summary">SB</th>
-            </tr>
-            <tr>
-                <td class="summary_header">2017</td>
-                <td class="summary">1.1</td>
-                <td class="summary">324</td>
-                <td class="summary">43</td>
-                <td class="summary">94</td>
-                <td class="summary">.290</td>
-                <td class="summary">5</td>
-                <td class="summary">32</td>
-                <td class="summary">7</td>
-            </tr>
-            <tr>
-                <td class="summary_header">Career</td>
-                <td class="summary">1.9</td>
-                <td class="summary">671</td>
-                <td class="summary">79</td>
-                <td class="summary">175</td>
-                <td class="summary">.261</td>
-                <td class="summary">7</td>
-                <td class="summary">64</td>
-                <td class="summary">7</td>
-            </tr>
-        </table>
+<!--Header-->
+{% include 'league/player/header.html' %}
+<!--Season Stats    -->
+{% if player.player_type in 'hx' %}
+    <h2 class="section_heading">Standard Batting</h2>
+    {% include 'league/stats/one_player_hitter.html' %}
+{% endif %}
+{% if player.player_type in 'px' %}
+    <h2 class="section_heading">Standard Pitching</h2>
+{% endif %}
+<!--Playoff Stats-->
+<!--Card Stats-->
+{% if player.player_type in 'hx' %}
+    <h2 class="section_heading">Hitting Card Stats</h2>
+    {% include 'league/card_stats/one_player_hitter.html' %}
+{% endif %}
+{% if player.player_type in 'px' %}
+    <h2 class="section_heading">Pitching Card Stats</h2>
+    {% include 'league/card_stats/one_player_pitcher.html' %}
+{% endif %}
+<!--Player Cards-->
+{% if player.player_type in 'hx' %}
+    <h2 class="section_heading">Hitting Card</h2>
+    <p>No Cards entered yet</p>
+    <!--{% include 'league/card_stats/one_player_hitter.html' %}-->
+{% endif %}
+{% if player.player_type in 'px' %}
+    <h2 class="section_heading">Pitching Card</h2>
+    <p>No Cards entered yet</p>
+    <!--{% include 'league/card_stats/one_player_pitcher.html' %}-->
     {% endif %}
-    {% if player.player_type in 'px' %}
-        <table class="summary">
-            <tr>
-                <th class="summary_header">SUMMARY</th>
-                <th class="summary">WAR</th>
-                <th class="summary">W</th>
-                <th class="summary">L</th>
-                <th class="summary">ERA</th>
-                <th class="summary">G</th>
-                <th class="summary">GS</th>
-                <th class="summary">SV</th>
-            </tr>
-            <tr>
-                <td class="summary_header">2017</td>
-                <td class="summary">-0.2</td>
-                <td class="summary">11</td>
-                <td class="summary">17</td>
-                <td class="summary">4.65</td>
-                <td class="summary">33</td>
-                <td class="summary">33</td>
-                <td class="summary">0</td>
-            </tr>
-            <tr>
-                <td class="summary_header">Career</td>
-                <td class="summary">16.2</td>
-                <td class="summary">118</td>
-                <td class="summary">99</td>
-                <td class="summary">4.25</td>
-                <td class="summary">278</td>
-                <td class="summary">274</td>
-                <td class="summary">0</td>
-            </tr>
-        </table>
-    {% endif %}
-    {% if player.player_type in 'hx' %}
-        <h2 class="section_heading">Standard Batting</h2>
-        <table class="stats">
-            <tr class="stats">
-                <th class="stats">Year</th>
-                <th class="stats">Age</th>
-                <th class="stats">Tm</th>
-                <th class="stats">Lg</th>
-                <th class="stats">G</th>
-                <th class="stats">PA</th>
-                <th class="stats">AB</th>
-                <th class="stats">R</th>
-                <th class="stats">H</th>
-                <th class="stats">2B</th>
-                <th class="stats">3B</th>
-                <th class="stats">HR</th>
-                <th class="stats">RBI</th>
-                <th class="stats">SB</th>
-                <th class="stats">CS</th>
-                <th class="stats">BB</th>
-                <th class="stats">SO</th>
-                <th class="stats">AVG</th>
-                <th class="stats">OBP</th>
-                <th class="stats">SLG</th>
-                <th class="stats">OPS</th>
-                <th class="stats">OPS+</th>
-                <th class="stats">TB</th>
-                <th class="stats">GDP</th>
-                <th class="stats">HBP</th>
-                <th class="stats">SH</th>
-                <th class="stats">SF</th>
-                <th class="stats">IBB</th>
-                <th class="stats">Pos</th>
-                <th class="stats">Awards</th>
-            </tr>
-        </table>
-    {% endif %}
-    {% if player.player_type in 'px' %}
-        <h2 class="section_heading">Standard Pitching</h2>
-    {% endif %}
-    <h2 class="section_heading">Player Cards</h2>
-    <p>Player detail page not finished, stats not live.</p>
-    <p>Player cards not loaded.</p>
-</body>
-</html>
+<p>Player detail page not finished.</p>
+{% endblock %}

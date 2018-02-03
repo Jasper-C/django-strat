@@ -1,9 +1,22 @@
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, get_list_or_404
 
-from league.models.players import Contract
+from league.models.players import Player, Contract, HitterCardStats, PitcherCardStats
 from league.models.teams import Payroll, Team
 from league.models.transactions import Arbitration, DraftPick
+
+
+def collect_team_list_info(year):
+    team_list_ = Team.objects.filter(year=year).order_by('location')
+    team_list = []
+    for t in team_list_:
+        payroll = collect_payroll_elements(t.franchise.id, year)
+        team_dict = {
+            'payroll': payroll,
+            'team': t,
+        }
+        team_list.append(team_dict)
+    return team_list
 
 
 def collect_payroll_adjustments(franchise, year):
@@ -126,6 +139,12 @@ def collect_payroll_elements(team, year):
     salary_cap = [135000000, 135000000, 135000000, 135000000, 135000000]
     net_payments = [0, 0, 0, 0, 0]
     net_remaining = [0, 0, 0, 0, 0]
+    fourty_man = 0
+    fourty_five_man = 0
+    for c in contracts:
+        fourty_five_man += 1
+        if c.type != 'AA':
+            fourty_man += 1
     for i in range(5):
         net_payments[i] = total_payroll[i] + total_adjustments[i]
         net_remaining[i] = salary_cap[i] - net_payments[i]
@@ -137,11 +156,44 @@ def collect_payroll_elements(team, year):
         'salary_cap': salary_cap,
         'net_remaining': net_remaining,
         'net_payments': net_payments,
+        '40_man': fourty_man,
+        '45_man': fourty_five_man,
     }
     return payroll
 
 
 def collect_draft_pick_list(team, year):
-    draft_picks = DraftPick.objects.filter(year=year, owner=team).order_by('round', 'order')
-    print(draft_picks)
+    draft_picks_ = DraftPick.objects.filter(year=year, owner=team).order_by('round', 'order')
+    draft_picks = []
+    for p in draft_picks_:
+        number = ((p.round - 1) * 16) + p.order
+        dft_pick = {
+            'pick': p,
+            'number': number,
+        }
+        draft_picks.append(dft_pick)
     return draft_picks
+
+
+def collect_team_roster(team, year):
+    collect_dict = {
+        'roster': [],
+        'hitters_card_stats': [],
+        'pitchers_card_stats': [],
+        'uncarded': [],
+    }
+    contracts = Contract.objects.filter(year=year, team=team)
+    for c in contracts:
+        plr_id = c.player_id
+        collect_dict['roster'].append(plr_id)
+        hitter_card_stats = HitterCardStats.objects.filter(year=year, player_id=plr_id)
+        pitcher_card_stats = PitcherCardStats.objects.filter(year=year, player_id=plr_id)
+        if len(hitter_card_stats) == 1:
+            collect_dict['hitters_card_stats'].append(hitter_card_stats[0])
+        if len(pitcher_card_stats) == 1:
+            collect_dict['pitchers_card_stats'].append(pitcher_card_stats[0])
+        if (len(hitter_card_stats) + len(pitcher_card_stats)) == 0:
+            uncarded = Player.objects.filter(id = plr_id)[0]
+            collect_dict['uncarded'].append(uncarded)
+
+    return collect_dict

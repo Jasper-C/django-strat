@@ -1,0 +1,45 @@
+<h2>Hitters Card Stats</h2>
+<table>
+    <tr>
+        <th>Player</th>
+        <th class="left">H</th>
+        <th class="left">OB</th>
+        <th class="left">TB</th>
+        <th class="left">HR</th>
+        <th class="left">BP</th>
+        <th class="left">Cl</th>
+        <th class="left">gbA</th>
+        <th class="right">H</th>
+        <th class="right">OB</th>
+        <th class="right">TB</th>
+        <th class="right">HR</th>
+        <th class="right">BP</th>
+        <th class="right">Cl</th>
+        <th class="right">gbA</th>
+        <th>Stealing</th>
+        <th>Run</th>
+        <th>Defense</th>
+    </tr>
+    {% for x in hitters_card_stats %}
+    <tr>
+        <td>{{x.player}}</td>
+        <td class="left">{{x.h_l}}</td>
+        <td class="left">{{x.ob_l}}</td>
+        <td class="left">{{x.tb_l}}</td>
+        <td class="left">{{x.hr_l}}</td>
+        <td class="left">{{x.bp_l}}</td>
+        <td class="left">{{x.cl_l}}</td>
+        <td class="left">{{x.gba_l}}</td>
+        <td class="right">{{x.h_r}}</td>
+        <td class="right">{{x.ob_r}}</td>
+        <td class="right">{{x.tb_r}}</td>
+        <td class="right">{{x.hr_r}}</td>
+        <td class="right">{{x.bp_r}}</td>
+        <td class="right">{{x.cl_r}}</td>
+        <td class="right">{{x.gba_r}}</td>
+        <td align="center">{{x.stealing}}</td>
+        <td>{{x.running}}</td>
+        <td>{{x.defensive_string}}</td>
+    </tr>
+    {% endfor %}
+</table>
