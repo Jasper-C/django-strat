@@ -1,5 +1,7 @@
 {% extends 'homepage/base.html' %}
 {% load static %}
+{% load humanize %}
+
 {% block content %}
     {% if last_year in year_list %}
         <h2><a href="{% url 'league:team_index' last_year %}">Previous Year</a> </h2>
@@ -14,15 +16,23 @@
             <th>Owner</th>
             <th>Ballpark</th>
             <th>Division</th>
+            <th>Players</th>
+            <th>Payroll Remaining</th>
         </tr>
-        {% for team in team_list %}
+        {% for t in team_list %}
             <tr>
-                <td><img src="{% static "league/" %}{{year}}{{team.abbreviation}}.jpg"
-                    alt="{{team.location}} {{team.nickname}} Logo"/> </td>
-                <td><a href="{% url 'league:team_detail' year team.abbreviation %}">{{team.location}} {{team.nickname}}</a></td>
-                <td><a href="mailto:{{team.owner.email}}">{{team.owner.first_name}} {{team.owner.last_name}}</a> </td>
-                <td>{{team.ballpark.year}} {{team.ballpark.location}}</td>
-                <td>{{team.get_division_display}}</td>
+                <td><img src="{% static "league/" %}{{year}}{{t.team.abbreviation}}.jpg"
+                    alt="{{t.team.location}} {{t.team.nickname}} Logo"/> </td>
+                <td><a href="{% url 'league:team_roster' year t.team.abbreviation %}">{{t.team.location}} {{t.team.nickname}}</a></td>
+                {% if user %}
+                    <td><a href="mailto:{{team.owner.email}}">{{t.team.owner.first_name}} {{t.team.owner.last_name}}</a> </td>
+                {% else %}
+                    <td>{{t.team.owner.first_name}} {{t.team.owner.last_name}}</td>
+                {% endif %}
+                <td>{{t.team.ballpark.year}} {{t.team.ballpark.location}}</td>
+                <td>{{t.team.get_division_display}}</td>
+                <td align="right">45 Man: {{t.payroll.45_man}}<br>40 Man: {{t.payroll.40_man}}</td>
+                <td align="right">${{t.payroll.payroll_remaining.0|intcomma}}</td>
             </tr>
         {% endfor %}
     </table>

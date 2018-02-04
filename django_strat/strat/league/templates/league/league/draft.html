@@ -1,0 +1,11 @@
+{% extends 'homepage/base.html' %}
+{% load humanize %}
+
+{% block page_title%}
+<title>Draft</title>
+{% endblock%}
+
+{% block content %}
+<h2><a href="{% url 'league:draft_players_index' year %}">Players In Draft</a> </h2>
+<h2><a href="{% url 'league:draft_picks_index' year %}">Draft Picks</a> </h2>
+{% endblock %}

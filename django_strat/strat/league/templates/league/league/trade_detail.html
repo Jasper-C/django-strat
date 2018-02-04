@@ -1,0 +1,36 @@
+{% extends 'homepage/base.html' %}
+{% load humanize %}
+
+{% block page_title %}
+<title>BAD League Trade Detail</title>
+{% endblock page_title %}
+
+{% block content %}
+<h1>
+    Trade between
+    {% for team in trade.trade.0.teams.all %}
+        {{team.location}} {{team.nickname}}
+        {% if forloop.revcounter0 >= 2 %}, {% endif %}
+        {% if forloop.revcounter0 == 1 %}and{% endif %}
+    {% endfor %}
+</h1>
+<h3>
+    Trade occured {{trade.trade.0.date}}
+</h3>
+<ul>
+    {% for tp in trade.trade_vector %}
+    <h2>{{tp.giving.location}} is sending to {{tp.receiving.location}}:</h2>
+    <ul>
+        {% for p in tp.players %}
+            <li>{{p.player}}</li>
+        {% endfor %}
+        {% for p in tp.picks %}
+            <li>{{p.draft_pick}}</li>
+        {% endfor %}
+        {% for m in tp.money %}
+            <li>${{m.money|intcomma}} for {{m.payroll_note}}'s {{m.year}} salary</li>
+        {% endfor %}
+    </ul>
+    {% endfor %}
+</ul>
+{% endblock content %}

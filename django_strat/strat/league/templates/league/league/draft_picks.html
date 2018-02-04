@@ -1,0 +1,20 @@
+{% extends 'homepage/base.html' %}
+{% load humanize %}
+
+{% block page_title%}
+<title>{{year}} Draft Pick List</title>
+{% endblock%}
+
+{% block content %}
+<h1>Draft Pick Listing</h1>
+    {% for t in teams %}
+        <h2>{{t.location}} {{t.nickname}}</h2>
+        <ul>
+            {% for d in draft_picks %}
+                {% if d.pick.owner == t.franchise %}
+                    <li>{{d.pick.original_team.location}}'s {{d.pick.round | ordinal}} round pick ({{d.number}})</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endfor %}
+{% endblock %}

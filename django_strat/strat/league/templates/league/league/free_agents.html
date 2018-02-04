@@ -1,0 +1,46 @@
+{% extends 'homepage/base.html' %}
+{% load humanize %}
+
+{% block page_title %}
+<title>{{year}} Free Agents</title>
+{% endblock %}
+
+
+{% block content %}
+<h1>Free Agent Listing</h1>
+<table border="1">
+    <tr>
+        <th colspan="2">Player</th>
+        <th>Auction Ends</th>
+        <th>Length</th>
+        <th>Salary</th>
+        <th>Bid Value</th>
+    </tr>
+    {% for f in free_agents %}
+    <tr>
+        <td>BID</td>
+        <td><a href="{% url 'league:player_detail' f.player.id %}">{{f.player.last_name}}, {{f.player.first_name}}</a> </td>
+        {% if f.auction_ends %}
+            <td>{{f.auction_ends}}</td>
+        {% else %}
+            <td></td>
+        {% endif %}
+        {% if f.bid_length %}
+            <td>{{f.bid_length}}</td>
+        {% else %}
+            <td></td>
+        {% endif %}
+        {% if f.bid_salary %}
+            <td>${{f.bid_salary|intcomma}}</td>
+        {% else %}
+            <td></td>
+        {% endif %}
+        {% if f.bid_value %}
+            <td>${{f.bid_value|intcomma}}</td>
+        {% else %}
+            <td></td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

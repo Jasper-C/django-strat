@@ -1,4 +1,14 @@
-Postgres
-code restructure
 built and deploy process
 nginx setup
+
+Topics to discuss:
+1) Get site online using nginx and uwsgi
+Know where to place static files so they get used properly
+
+2) Forms, Entering Data, Sanitising User Input
+Conditional Fields (Long Term Contracts), Using Forms
+to change model data
+
+3) Creating proper user authorization, both allow and prevent
+
+4) Working with M2M fields, display in template etc.

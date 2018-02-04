@@ -1,0 +1,26 @@
+{% extends 'homepage/base.html' %}
+{% load humanize %}
+
+{% block page_title%}
+<title>{{year}} Draft List</title>
+{% endblock%}
+
+{% block content %}
+<h1>Draft Pick Listing</h1>
+        <table border="1">
+            <tr>
+                <th colspan="2">Player</th>
+                <th>Contract</th>
+                <th>Salary</th>
+            </tr>
+            {% for d in draft_players %}
+                <tr>
+                    <td>DRAFT</td>
+                    <td><a href="{% url 'league:player_detail' d.player.id %}">
+                        {{d.player.last_name}}, {{d.player.first_name}}</a> </td>
+                    <td align="center">{{d.contract}}</td>
+                    <td>${{d.salary|intcomma}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+{% endblock %}
