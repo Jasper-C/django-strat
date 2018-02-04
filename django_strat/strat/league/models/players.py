@@ -57,7 +57,7 @@ class Contract(models.Model):
         ordering = ['-year', 'player']
 
     def __str__(self):
-        return '{}, {} - {} Contract'.format(self.player.last_name, self.player.first_name, self.year)
+        return '{}, {} - {}'.format(self.player.last_name, self.player.first_name, self.year)
 
     contract_advance = {
         0: 'AA',

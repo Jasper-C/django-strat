@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form method="POST" action=".">
+    <input type=submit>
+    <h2>Renewable Contracts</h2>
+    <table>
+        {% csrf_token %}
+        {{ renewable.as_table }}
+</form>
+</table>
+<h2>Guarenteed Contracts</h2>
+<table>
+    <form>
+        {{guarenteed.as_table}}
+    </form>
+</table>
+</body>
+</html>

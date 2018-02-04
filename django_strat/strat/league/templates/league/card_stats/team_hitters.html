@@ -1,4 +1,4 @@
-<h2>Hitters Card Stats</h2>
+<h2>Hitters</h2>
 <table>
     <tr>
         <th>Player</th>
@@ -20,9 +20,9 @@
         <th>Run</th>
         <th>Defense</th>
     </tr>
-    {% for x in hitters_card_stats %}
+    {% for x in team.card_stats.hitters %}
     <tr>
-        <td>{{x.player}}</td>
+        <td><a href="{% url 'league:player_detail' x.player.id %}">{{x.player}}</a> </td>
         <td class="left">{{x.h_l}}</td>
         <td class="left">{{x.ob_l}}</td>
         <td class="left">{{x.tb_l}}</td>

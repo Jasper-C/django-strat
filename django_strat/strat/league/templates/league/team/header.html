@@ -1,0 +1,19 @@
+<h1>{{team.team.year}} {{team.team.location}} {{team.team.nickname}} Statistics</h1>
+<p><strong>Record:</strong>Team Record</p>
+<p><strong>Pythagorean W-L:</strong>Pyth Rec. Runs: XXX Runs Allowed: XXX</p>
+{% if team.team.owner is not Null %}
+    <p>
+        <strong>Owner:</strong> {{team.team.owner.first_name}} {{team.team.owner.last_name}}
+        {% if user %}
+        (<a href="mailto:{{team.team.owner.email_address}}">email</a>)
+        {% endif %}
+    </p>
+{% else %}
+    <p>Owner: None</p>
+{% endif %}
+<p><strong>Ballpark:</strong> {{team.team.ballpark.year}} {{team.team.ballpark.location}} - {{team.team.ballpark.name}}</p>
+<p>Singles vs Left: {{team.team.ballpark.singles_left}} Singles vs Right: {{team.team.ballpark.singles_right}}</p>
+<p>Home Runs vs Left: {{team.team.ballpark.homeruns_left}} Home Runs vs Right: {{team.team.ballpark.homeruns_right}}</p>
+{% if team.team.postseason %}
+    <p><strong>Postseason: NONE YET</strong></p>
+{% endif %}

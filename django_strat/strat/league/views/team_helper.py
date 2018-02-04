@@ -1,199 +1,296 @@
 from django.db.models import Q
-from django.shortcuts import get_object_or_404, get_list_or_404
 
-from league.models.players import Player, Contract, HitterCardStats, PitcherCardStats
+from league.models.players import Contract, HitterCardStats, PitcherCardStats
 from league.models.teams import Payroll, Team
 from league.models.transactions import Arbitration, DraftPick
 
+"""
+A possible team_dict keys and where they are generated:
+id, team abbreviation (str), generated in collect_team or collect_teams
+team, team object, generated in collect team or collect_teams
+roster, roster list (of dict), generated in collect_roster
+payroll, payroll dict, generated in collect_payroll
+adjustment, adjustment list (of dict), generated in collect_adjustments
+draft_pick, draft pick list (of dict), generated in collect_draft_pick
+"""
 
-def collect_team_list_info(year):
-    team_list_ = Team.objects.filter(year=year).order_by('location')
-    team_list = []
-    for t in team_list_:
-        payroll = collect_payroll_elements(t.franchise.id, year)
-        team_dict = {
-            'payroll': payroll,
+
+def collect_teams(year):
+    """
+    Takes a year and returns a list of team dictionaries with the id and team keys
+    return:
+        list of dictionaries of teams
+    """
+
+    team_list = Team.objects.filter(year=year).order_by('location')
+    teams = []
+    for t in team_list:
+        team = {
+            'id': t.abbreviation,
             'team': t,
         }
-        team_list.append(team_dict)
-    return team_list
+        teams.append(team)
+    return teams
 
 
-def collect_payroll_adjustments(franchise, year):
+def collect_team(year, abbreviation):
+    """
+    Takes a year and abbreviation and returns a team dictionary with the id and team keys
+    return:
+        dictionary of a team
+    """
+
+    team = Team.objects.filter(year=year, abbreviation=abbreviation)[0]
+    team = {
+        'id': abbreviation,
+        'team': team,
+    }
+    return team
+
+
+def collect_roster(team_dict):
+    """
+    Takes a team_dict and adds a roster key, the roster is a list of players with keys: id,
+    player and contract. Requires the team key already.
+    Return
+        team_dict with new roster key
+    """
+
+    team = team_dict['team']
+    team_dict['roster'] = []
+    roster = Contract.objects.filter(year=team.year, team=team.abbreviation)
+    for r in roster:
+        player = {
+            'id': r.player.id,
+            'player': r.player,
+            'contract': r
+        }
+        team_dict['roster'].append(player)
+    return team_dict
+
+
+def collect_payroll(team_dict):
+    """
+    Takes a team_dict with a roster key and adds a payroll key. The payroll key contains a
+    dictionary that has quick roster size info, gross and net payroll, payroll adjustments and
+    remaining payroll. Requires the roster key already.
+    return
+        team_dict
+    """
+    fourty_five_man = len(team_dict['roster'])
+    fourty_man = sum(1 for x in team_dict['roster'] if x['contract'].type != 'AA')
+    gross_payroll = collect_salaries(team_dict)
+    payroll_adjustments = collect_adjustment_totals(team_dict)
+    net_payroll = [0, 0, 0, 0, 0]
+    payroll_remaining = [0, 0, 0, 0, 0]
+    for i in range(5):
+        net_payroll[i] = gross_payroll[i] + payroll_adjustments[i]
+        payroll_remaining[i] = 135000000 - net_payroll[i]
+    team_dict['payroll'] = {
+        '40_man': fourty_man,
+        '45_man': fourty_five_man,
+        'gross_payroll': gross_payroll,
+        'payroll_adjustments': payroll_adjustments,
+        'net_payroll': net_payroll,
+        'payroll_remaining': payroll_remaining,
+        'salary_cap': [135000000, 135000000, 135000000, 135000000, 135000000]
+    }
+    return team_dict
+
+
+def collect_card_stats(team_dict):
+    """
+    Takes a team_dict with a roster key and adds a card_stats key, the card stats key includes a dictionary
+    with 3 lists: hitters card stats, pitchers card stats and an uncarded players list.
+    return
+        team_dict
+    """
+    team_dict['card_stats'] = {
+        'hitters': [],
+        'pitchers': [],
+        'uncarded': [],
+    }
+    for p in team_dict['roster']:
+        hitter = HitterCardStats.objects.filter(player=p['id'], year=team_dict['team'].year)
+        pitcher = PitcherCardStats.objects.filter(player=p['id'], year=team_dict['team'].year)
+        if hitter.count():
+            team_dict['card_stats']['hitters'].append(hitter[0])
+        if pitcher.count():
+            team_dict['card_stats']['pitchers'].append(pitcher[0])
+        if (hitter.count() + pitcher.count()) == 0:
+            team_dict['card_stats']['uncarded'].append(p['player'])
+    return team_dict
+
+
+def collect_salaries(team_dict):
+    """
+    Takes the team_dict, looks up all the salaries and sums them for the next 5 years.
+    return
+        list of 5 integers, the total of all the salaries
+    """
+    salaries = [0, 0, 0, 0, 0]
+    for c in team_dict['roster']:
+        for i in range(5):
+            if (c['contract'].contract_season + i) <= c['contract'].length:
+                salaries[i] += c['contract'].salary
+    return salaries
+
+
+def collect_adjustment_totals(team_dict):
+    """
+    Takes the team_dict, looks up all the adjustments and sums them for the next 5 years.
+    return
+        list of 5 integers, the total of all the payroll adjustments
+    """
+    franchise = team_dict['team'].franchise.id
+    year = team_dict['team'].year
     adjustments = Payroll.objects.filter(
         Q(paying=franchise) | Q(receiving=franchise)
     )
     adjustments = adjustments.filter(year__gte=year).order_by('note', 'year')
-    return_data = []
+    adjustments_list = [0, 0, 0, 0, 0]
     for a in adjustments:
-        notes = a.note
-        money = a.money
         if a.receiving is not None:
             if a.receiving.id == franchise:
-                money = a.money * -1
+                adjustments_list[a.year - year] -= a.money
+        if a.paying is not None:
+            if a.paying.id == franchise:
+                adjustments_list[a.year - year] += a.money
+    return adjustments_list
+
+
+def collect_adjustments(team_dict):
+    """
+    Takes the team_dict and adds the adjustment key, adjustment is a list of dicts with keys
+    notes and money.
+    return
+        team_dict
+    """
+    team_dict['adjustment'] = []
+
+    adjustments = Payroll.objects.filter(
+        Q(paying=team_dict['team'].franchise) | Q(receiving=team_dict['team'].franchise)
+    )
+    adjustments = adjustments.filter(year__gte=team_dict['team'].year).order_by('note', 'year')
+    for a in adjustments:
+        money = a.money
+        year = a.year - team_dict['team'].year
+        if a.receiving is not None:
+            if a.receiving == team_dict['team'].franchise:
+                money = money * -1
         exists = False
-        for r in return_data:
-            if r['notes'] == notes:
+        for d in team_dict['adjustment']:
+            if a.note == d['note']:
                 exists = True
         if exists:
-            for r in return_data:
-                if r['notes'] == notes:
-                    r['adjustments'].append(money)
+            for d in team_dict['adjustment']:
+                if a.note == d['note']:
+                    d['money'][year] = money
         else:
-            if a.year == year:
-                return_data.append({
-                    'notes': notes,
-                    'adjustments': [money, ],
-                })
-            elif a.year == year + 1:
-                return_data.append({
-                    'notes': notes,
-                    'adjustments': [0, money, ],
-                })
-            elif a.year == year + 2:
-                return_data.append({
-                    'notes': notes,
-                    'adjustments': [0, 0, money, ],
-                })
-    return return_data
+            add_dict = {
+                'note': a.note,
+                'money': [0, 0, 0, 0, 0],
+            }
+            add_dict['money'][year] = money
+            team_dict['adjustment'].append(add_dict.copy())
+    return team_dict
 
 
-def collect_total_payroll(team, year):
-    contracts = get_list_or_404(Contract.objects.filter(year=year, team=team))
-    total_payroll = [0, 0, 0, 0, 0]
-    for c in contracts:
-        guaranteed_years = c.length - c.contract_season + 1
-        guaranteed_years = min(guaranteed_years, 5)
-        for i in range(guaranteed_years):
-            total_payroll[i] += c.salary
-    return total_payroll, contracts
-
-
-def collect_total_adjustments(adjustments):
-    total_adjustments = [0, 0, 0, 0, 0]
-    for a in adjustments:
-        adjustment_years = len(a['adjustments'])
-        for i in range(adjustment_years):
-            total_adjustments[i] += a['adjustments'][i]
-    return total_adjustments
-
-
-def collect_team_header(team, year):
-    team = get_object_or_404(Team, year=year, abbreviation=team)
-    postseason = collect_postseason_data(team, year)
-    header = {
-        'team': team,
-        'postseason': postseason,
+def collect_contract_display(contract):
+    """
+    Takes a contract object and returns a dict for displaying that contract properly in the
+    payroll view. Also verifies that the display list is at least 5 seasons long
+    return
+        contract dict with keys: contract, display, year_display
+    """
+    progression = ['AA', 'Y1', 'Y2', 'Y3', 'Arb4', 'Arb5', 'Arb6', 'FA', '', '', '']
+    contract_dict = {
+        'contract': contract,
+        'display': contract.display_contract(),
+        'year_display': []
     }
-    return header
+    contract_dict['year_display'].append(contract.salary)
+    if contract.type in 'DFLUX':
+        for i in range(min(contract.length - contract.contract_season, 4)):
+            contract_dict['year_display'].append(contract.salary)
+        if len(contract_dict['year_display']) < 5:
+            contract_dict['year_display'].append('FA')
+    else:
+        t = contract.type
+        if len(t) == 3:
+            t = t[:2]
+        season = progression.index(t)
+        contract_dict['year_display'].extend(progression[season + 1:season + 5])
+    while len(contract_dict['year_display']) < 5:
+        contract_dict['year_display'].append('')
+    return contract_dict
 
 
-def collect_postseason_data(team, year):
-    return None
+def collect_renewable(team_dict):
+    """
+    Takes team_dict and returns a list of dicts with the keys for players: id, player, contract.
+    return
+        arbitration (type list)
+    """
+    renewable = []
+    renewable_list = ['AA', 'AAA', 'Y1', 'Y1*', 'Y2', 'Y2*', 'Y3', 'Y3*']
+    for r in team_dict['roster']:
+        if r['contract'].type in renewable_list:
+            renewable.append(r)
+    return renewable
 
 
-def collect_off_season_contracts(team, year):
-    contracts = Contract.objects.filter(year=year, team=team)
-    # buyout list
-    # early contract list
-    early_contracts = ['AA', 'AAA', 'Y1', 'Y2', 'Y3', 'Y1*', 'Y2*', 'Y3*']
-    early_contract_list = []
-    # arbitration contract list
-    arbitration_contracts = ['Arb4', 'Arb5', 'Arb6']
-    arbitration_contract_list = []
-    arbitration_info = []
-    # guarneteed contract list
-    guarenteed_contract_list = []
-    players_signed, cards_signed = 0, 0
-    for c in contracts:
-        players_signed += 1
-        if c.type != 'AA':
-            cards_signed += 1
-        if c.type in early_contracts:
-            early_contract_list.append(c)
-        elif c.type in arbitration_contracts:
-            arbitration_contract_list.append(c)
-            arb = get_object_or_404(Arbitration, year=year, player=c.player)
-            arbitration_info.append(arb)
-        else:
-            guarenteed_contract_list.append(c)
-    open_roster_slots = 45 - players_signed
-    open_carded_slots = 40 - cards_signed
-    contracts = {
-        'early_contracts': early_contract_list,
-        'arbitration_contracts': arbitration_contract_list,
-        'arbitration_info': arbitration_info,
-        'guarenteed_contracts': guarenteed_contract_list,
-        'players_signed': players_signed,
-        'cards_signed': cards_signed,
-        'open_roster_slots': open_roster_slots,
-        'open_carded_slots': open_carded_slots,
-    }
-    return contracts
+def collect_guarenteed(team_dict):
+    """
+    Takes team_dict and returns a list of dicts with the keys for players: id, player, contract.
+    return
+        arbitration (type list)
+    """
+    guarenteed = []
+    for r in team_dict['roster']:
+        if r['contract'].type in 'DFLUX':
+            guarenteed.append(r)
+    return guarenteed
 
 
-def collect_payroll_elements(team, year):
-    total_payroll, contracts = collect_total_payroll(team, year)
-    adjustments = collect_payroll_adjustments(team, year)
-    total_adjustments = collect_total_adjustments(adjustments)
-    salary_cap = [135000000, 135000000, 135000000, 135000000, 135000000]
-    net_payments = [0, 0, 0, 0, 0]
-    net_remaining = [0, 0, 0, 0, 0]
-    fourty_man = 0
-    fourty_five_man = 0
-    for c in contracts:
-        fourty_five_man += 1
-        if c.type != 'AA':
-            fourty_man += 1
-    for i in range(5):
-        net_payments[i] = total_payroll[i] + total_adjustments[i]
-        net_remaining[i] = salary_cap[i] - net_payments[i]
-    payroll = {
-        'contracts': contracts,
-        'adjustments': adjustments,
-        'total_payroll': total_payroll,
-        'total_adjustments': total_adjustments,
-        'salary_cap': salary_cap,
-        'net_remaining': net_remaining,
-        'net_payments': net_payments,
-        '40_man': fourty_man,
-        '45_man': fourty_five_man,
-    }
-    return payroll
+def collect_arbitration(team_dict):
+    """
+    Takes team_dict and returns a list of dicts with the keys for players: id, player, contract,
+    minimum, median and maximum, the last 3 are related directly to the arbitration contract values.
+    return
+        arbitration (type list)
+    """
+    arbitration = []
+    for r in team_dict['roster']:
+        if 'Arb' in r['contract'].type:
+            new_dict = {
+                'contract': r['contract'],
+                'id': r['id'],
+                'player': r['player'],
+            }
+            new_arb = Arbitration.objects.filter(player=r['player'], year=r['contract'].year)[0]
+            new_dict['minimum'] = new_arb.minimum_contract()
+            new_dict['median'] = new_arb.median_contract()
+            new_dict['maximum'] = new_arb.maximum_contract()
+            arbitration.append(new_dict)
+    return arbitration
 
 
-def collect_draft_pick_list(team, year):
-    draft_picks_ = DraftPick.objects.filter(year=year, owner=team).order_by('round', 'order')
-    draft_picks = []
-    for p in draft_picks_:
+def collect_draft_pick(team_dict):
+    """
+    Takes the team_dict and adds the draft_pick key, draft_pick is a list of dicts with keys
+    pick and number.
+    return
+        team_dict
+    """
+    team_dict['draft_pick'] = []
+    pick_list = DraftPick.objects.filter(owner=team_dict['team'].franchise.id,
+                                         year=team_dict['team'].year)
+    for p in pick_list:
         number = ((p.round - 1) * 16) + p.order
         dft_pick = {
             'pick': p,
             'number': number,
         }
-        draft_picks.append(dft_pick)
-    return draft_picks
-
-
-def collect_team_roster(team, year):
-    collect_dict = {
-        'roster': [],
-        'hitters_card_stats': [],
-        'pitchers_card_stats': [],
-        'uncarded': [],
-    }
-    contracts = Contract.objects.filter(year=year, team=team)
-    for c in contracts:
-        plr_id = c.player_id
-        collect_dict['roster'].append(plr_id)
-        hitter_card_stats = HitterCardStats.objects.filter(year=year, player_id=plr_id)
-        pitcher_card_stats = PitcherCardStats.objects.filter(year=year, player_id=plr_id)
-        if len(hitter_card_stats) == 1:
-            collect_dict['hitters_card_stats'].append(hitter_card_stats[0])
-        if len(pitcher_card_stats) == 1:
-            collect_dict['pitchers_card_stats'].append(pitcher_card_stats[0])
-        if (len(hitter_card_stats) + len(pitcher_card_stats)) == 0:
-            uncarded = Player.objects.filter(id = plr_id)[0]
-            collect_dict['uncarded'].append(uncarded)
-
-    return collect_dict
+        team_dict['draft_pick'].append(dft_pick)
+    return team_dict

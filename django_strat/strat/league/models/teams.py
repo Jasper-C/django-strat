@@ -59,7 +59,7 @@ class Team(models.Model):
         ordering = ['-year', 'location']
 
     def __str__(self):
-        return '<Team: {} {} {}>'.format(self.year, self.location, self.nickname)
+        return '{} {} {}'.format(self.year, self.location, self.nickname)
 
 
 class Payroll(models.Model):

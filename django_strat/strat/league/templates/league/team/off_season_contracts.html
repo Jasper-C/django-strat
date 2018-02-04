@@ -24,9 +24,11 @@
             {{c.player.last_name}}, {{c.player.first_name}}</a> </td>
         <td align="center">{{c.type}}</td>
         <td align="right">${{c.salary|intcomma}}</td>
-        <td><input type="radio" value="keep" name="{{c.player.id}}" checked="checked">Keep</td>
-        <td><input type="radio" value="long_term" name="{{c.player.id}}">Long Term Deal</td>
-        <td><input type="radio" value="non-tender" name="{{c.player.id}}">Non-Tender</td>
+        {% if is_owner %}
+            <td><input type="radio" value="keep" name="{{c.player.id}}" checked="checked">Keep</td>
+            <td><input type="radio" value="long_term" name="{{c.player.id}}">Long Term Deal</td>
+            <td><input type="radio" value="non-tender" name="{{c.player.id}}">Non-Tender</td>
+        {% endif %}
      </tr>
 {% endfor %}
     <tr>
@@ -54,9 +56,11 @@
         <td align="right">${{c.minimum_contract|intcomma}}</td>
         <td align="right">${{c.median_contract|intcomma}}</td>
         <td align="right">${{c.maximum_contract|intcomma}}</td>
-        <td><input type="radio" value="arbitration" name="{{c.player.id}}" checked="checked">Go To Arbitration</td>
-        <td><input type="radio" value="long_term" name="{{c.player.id}}">Long Term Deal</td>
-        <td><input type="radio" value="non_tender" name="{{c.player.id}}">Non-Tender</td>
+        {% if is_owner %}
+            <td><input type="radio" value="arbitration" name="{{c.player.id}}" checked="checked">Go To Arbitration</td>
+            <td><input type="radio" value="long_term" name="{{c.player.id}}">Long Term Deal</td>
+            <td><input type="radio" value="non_tender" name="{{c.player.id}}">Non-Tender</td>
+        {% endif %}
     </tr>
 {% endfor %}
     <tr>
@@ -81,13 +85,17 @@
             {{c.player.last_name}}, {{c.player.first_name}}</a> </td>
         <td align="center">{{c.contract_season}}-{{c.length}}, {{c.type}}</td>
         <td align="right">${{c.salary|intcomma}}</td>
-        <td><input type="radio" value="keep" name="{{c.player.id}}" checked="checked">Keep</td>
-        <td><input type="radio" value="release" name="{{c.player.id}}">Release</td>
+        {% if is_owner %}
+            <td><input type="radio" value="keep" name="{{c.player.id}}" checked="checked">Keep</td>
+            <td><input type="radio" value="release" name="{{c.player.id}}">Release</td>
+        {% endif %}
     </tr>
 {% endfor %}
 </table>
 <p>Released players must be paid for in full, and become free agents if not signed during their waiver period.</p>
-    <input type="submit" value="Approve">
-    <input type="button" value="Cancel">
+    {% if is_owner %}
+        <input type="submit" value="Approve">
+        <input type="button" value="Cancel">
+    {% endif %}
     </form>
 {% endblock %}

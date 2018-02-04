@@ -1,86 +1,129 @@
 {% extends "./base.html" %}
 
 {% load humanize %}
-{% load players_tags %}
 {% block content %}
+<style>
+    td.renewable {
+        text-align: Center;
+    }
+    td.free_agent {
+        text-align: Center;
+        background-color: LightPink;
+        color: DarkRed;
+    }
+    td.guarenteed {
+        text-align: Right;
+    }
+    td.negative {
+        color: Red;
+        text-align: Right;
+    }
+    td.positive {
+        text-align: Right;
+    }
+</style>
 <table>
     <tr>
         <th>Player</th>
         <th>Contract</th>
-        <th>{{header.team.year}}</th>
-        <th>{{header.team.year|add:"+1"}}</th>
-        <th>{{header.team.year|add:"+2"}}</th>
-        <th>{{header.team.year|add:"+3"}}</th>
-        <th>{{header.team.year|add:"+4"}}</th>
+        <th>{{team.team.year}}</th>
+        <th>{{team.team.year|add:"+1"}}</th>
+        <th>{{team.team.year|add:"+2"}}</th>
+        <th>{{team.team.year|add:"+3"}}</th>
+        <th>{{team.team.year|add:"+4"}}</th>
     </tr>
-    {% for p in payroll.contracts %}
+    {% for p in team.roster %}
     <tr>
-        <td><a href="{% url 'league:player_detail' p.player_id %}">{{p.player.last_name}}, {{p.player.first_name}}</a></td>
-        <td align="center">{{p.display_contract}}</td>
-        <td align="right">${{p.salary | intcomma}}</td>
-        <td align="right">{{ p | plus_years:1 }}</td>
-        <td align="right">{{ p | plus_years:2 }}</td>
-        <td align="right">{{ p | plus_years:3 }}</td>
-        <td align="right">{{ p | plus_years:4 }}</td>
+        <td><a href="{% url 'league:player_detail' p.contract.contract.player_id %}">
+            {{p.contract.contract.player.last_name}},
+            {{p.contract.contract.player.first_name}}</a></td>
+        <td align="center">{{p.contract.display}}</td>
+        <td align="right">${{p.contract.year_display.0| intcomma}}</td>
+        
+        {% if p.contract.year_display.1 == 'FA' %}
+        <td class="free_agent"><strong>{{p.contract.year_display.1}}</strong></td>
+        {% elif p.contract.year_display.1 in contract_list %}
+            <td class="renewable">{{p.contract.year_display.1}}</td>
+        {% elif p.contract.year_display.1 == '' %}
+            <td></td>
+        {% else %}
+            <td class="guarenteed">${{p.contract.year_display.1| intcomma}}</td>
+        {% endif %}
+        
+        {% if p.contract.year_display.2 == 'FA' %}
+        <td class="free_agent"><strong>{{p.contract.year_display.2}}</strong></td>
+        {% elif p.contract.year_display.2 in contract_list %}
+            <td class="renewable">{{p.contract.year_display.2}}</td>
+        {% elif p.contract.year_display.2 == '' %}
+            <td></td>
+        {% else %}
+            <td class="guarenteed">${{p.contract.year_display.2| intcomma}}</td>
+        {% endif %}
+        
+        {% if p.contract.year_display.3 == 'FA' %}
+        <td class="free_agent"><strong>{{p.contract.year_display.3}}</strong></td>
+        {% elif p.contract.year_display.3 in contract_list %}
+            <td class="renewable">{{p.contract.year_display.3}}</td>
+        {% elif p.contract.year_display.3 == '' %}
+            <td></td>
+        {% else %}
+            <td class="guarenteed">${{p.contract.year_display.3| intcomma}}</td>
+        {% endif %}
+        
+        {% if p.contract.year_display.4 == 'FA' %}
+        <td class="free_agent"><strong>{{p.contract.year_display.4}}</strong></td>
+        {% elif p.contract.year_display.4 in contract_list %}
+            <td class="renewable">{{p.contract.year_display.4}}</td>
+        {% elif p.contract.year_display.4 == '' %}
+            <td></td>
+        {% else %}
+            <td class="guarenteed">${{p.contract.year_display.4| intcomma}}</td>
+        {% endif %}
     </tr>
     {% endfor %}
     <tr>
         <td colspan="2"><strong>Total Payroll</strong></td>
-        {% for i in payroll.total_payroll %}
+        {% for i in team.payroll.gross_payroll %}
             <td align="right"><strong>${{i|intcomma}}</strong></td>
         {% endfor %}
     </tr>
-    {% for a in payroll.adjustments %}
+    {% for a in team.adjustment %}
     <tr>
-        <td colspan="2">{{a.notes}}</td>
-        {% if a.adjustments.0 %}
-            <td align="right">${{a.adjustments.0|intcomma}}</td>
-        {% else %}
-            <td>x{{i}}</td>
-        {% endif %}
-        {% if a.adjustments.1 %}
-            <td align="right">${{a.adjustments.1|intcomma}}</td>
-        {% else %}
-            <td></td>
-        {% endif %}
-        {% if a.adjustments.2 %}
-            <td align="right">${{a.adjustments.2|intcomma}}</td>
-        {% else %}
-            <td></td>
-        {% endif %}
-        {% if a.adjustments.3 %}
-            <td align="right">${{a.adjustments.3|intcomma}}</td>
-        {% else %}
-            <td></td>
-        {% endif %}
-        {% if a.adjustments.4 %}
-            <td align="right">${{a.adjustments.4|intcomma}}</td>
-        {% else %}
-            <td></td>
-        {% endif %}
+        <td colspan="2">{{a.note}}</td>
+        {% for i in a.money %}
+            {% if i %}
+                {% if i > 0 %}
+                    <td class="positive">${{i|intcomma}}</td>
+                {% else %}
+                    <td class="negative">-${{i|intcomma|slice:"1:"}}</td>
+                {% endif %}
+            {% else %}
+                <td></td>
+            {% endif %}
+        {% endfor %}
     </tr>
     {% endfor %}
     <tr>
         <td colspan="2"><strong>Total Adjustments</strong></td>
-        {% for i in payroll.total_adjustments %}
+        {% for i in team.payroll.payroll_adjustments %}
             <td align="right"><strong>${{i|intcomma}}</strong></td>
         {% endfor %}
     </tr>
     <tr>
         <td colspan="2"><strong>Payroll + Adjustments</strong></td>
-        {% for i in payroll.net_payments %}
+        {% for i in team.payroll.net_payroll %}
             <td align="right"><strong>${{i|intcomma}}</strong></td>
         {% endfor %}
     </tr>
     <tr>
         <td colspan="2"><strong>Salary Cap</strong></td>
-        {% for i in payroll.salary_cap %}
+        {% for i in team.payroll.salary_cap %}
             <td align="right"><strong>${{i|intcomma}}</strong></td>
         {% endfor %}
     </tr>
     <tr>
         <td colspan="2"><strong>Total Remaining</strong></td>
-        {% for i in payroll.net_remaining %}
+        {% for i in team.payroll.payroll_remaining %}
             <td align="right"><strong>${{i|intcomma}}</strong></td>
         {% endfor %}
     </tr>
