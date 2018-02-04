@@ -3,7 +3,7 @@
 
 {% block content %}
     <ul>
-        {% for d in draft_picks %}
+        {% for d in team.draft_pick %}
             <li>{{d.pick.original_team.location}}'s {{d.pick.round | ordinal}} round pick ({{d.number}})</li>
         {% endfor %}
     </ul>

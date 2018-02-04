@@ -7,7 +7,7 @@ from league.forms.teams import RenewableArbitration, GuarenteedArbitration
 from league.models.teams import Team
 from league.views.team_helper import collect_teams, collect_team, collect_roster, \
     collect_payroll, collect_card_stats, collect_contract_display, collect_adjustments, \
-    collect_renewable, collect_guarenteed, collect_arbitration
+    collect_renewable, collect_guarenteed, collect_arbitration, collect_draft_pick
 
 
 class TeamIndex(View):
@@ -119,13 +119,14 @@ class TeamOffSeasonContracts(UserPassesTestMixin, View):
         pass
 
 
-class TeamDraftPickList(View):
+class TeamDraftPick(View):
+    http_method_names = ['get']
 
     def get(self, request, year, abbreviation):
-        draft_picks = collect_draft_pick_list(abbreviation, year)
+        team = collect_team(year=year, abbreviation=abbreviation)
+        team = collect_draft_pick(team)
         context = {
-            'header': collect_team_header(abbreviation, year),
-            'draft_picks': draft_picks,
+            'team': team,
         }
         return render(request, 'league/team/draft_picks.html', context)
 

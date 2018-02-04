@@ -16,7 +16,7 @@ urlpatterns = [
     path('teams/<int:year>/<str:abbreviation>/arbitration/', teams.TeamArbitration.as_view(),
          name='team_arbitration'),
     path('teams/<int:year>/<str:abbreviation>/draft_picks/',
-         teams.TeamDraftPickList.as_view(), name='team_draft_picks'),
+         teams.TeamDraftPick.as_view(), name='team_draft_picks'),
     path('draft', league.LeagueDraft.as_view(), name='draft'),
     path('draft/<int:year>/picks_index', league.LeagueDraftPicks.as_view(), name='draft_picks_index'),
     path('draft/<int:year>/players_index', league.LeagueDraftPlayers.as_view(), name='draft_players_index'),
