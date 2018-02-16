@@ -4,9 +4,9 @@ from league.models.transactions import Trades, TradePart,\
 
 def collect_trades(year, team=None):
     if team is None:
-        trade = Trades.objects.filter(year=year)
+        trade = Trades.objects.filter(year=year).order_by('date')
     else:
-        trade = Trades.objects.filter(year=year, team=team)
+        trade = Trades.objects.filter(year=year, team=team).order_by('date')
     trades = []
     for t in trade:
         trd = collect_trade(t.id)

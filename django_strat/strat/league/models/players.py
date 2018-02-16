@@ -23,6 +23,9 @@ class Player(models.Model):
     def __str__(self):
         return '{}, {}'.format(self.last_name, self.first_name)
 
+    def display_name(self):
+        return '{}, {}'.format(self.last_name, self.first_name)
+
     def batting_hand(self):
         if self.bats.lower() == 'l':
             return 'Left'
@@ -142,6 +145,9 @@ class PlayerCardStats(models.Model):
     class Meta:
         ordering = ['-year', 'player']
 
+    def __str__(self):
+        return '{}, {}-{}'.format(self.player.last_name, self.player.first_name, self.year)
+
     def h_l(self):
         return '{:3.0f}'.format(self.hits_left / 20)
 
@@ -155,7 +161,7 @@ class PlayerCardStats(models.Model):
         return '{:4.1f}'.format(self.homeruns_left / 20)
 
     def gba_l(self):
-        return '{:2.0f}'.format(self.homeruns_left / 20)
+        return '{:2.0f}'.format(self.gba_left / 20)
 
     def h_r(self):
         return '{:3.0f}'.format(self.hits_right / 20)
@@ -170,7 +176,7 @@ class PlayerCardStats(models.Model):
         return '{:4.1f}'.format(self.homeruns_right / 20)
 
     def gba_r(self):
-        return '{:2.0f}'.format(self.homeruns_right / 20)
+        return '{:2.0f}'.format(self.gba_right / 20)
 
 
 class HitterCardStats(PlayerCardStats):
@@ -200,6 +206,14 @@ class HitterCardStats(PlayerCardStats):
     def_catcher_t_rating = models.IntegerField(null=True, blank=True)
     defensive_string = models.CharField(null=True, blank=True, max_length=100)
 
+    def display_name(self):
+        display_name = self.player.display_name()
+        if self.player.bats.lower() == 'l':
+            display_name += '*'
+        elif self.player.bats.lower() == 's':
+            display_name += '+'
+        return display_name
+
     def bp_l(self):
         bp = ''
         if not self.power_left:
@@ -211,7 +225,7 @@ class HitterCardStats(PlayerCardStats):
         return bp
 
     def cl_l(self):
-        return '{:+d}'.format(self.clutch_left)
+        return '{0:{1}}'.format(self.clutch_left, '+' if self.clutch_left else '')
 
     def bp_r(self):
         bp = ''
@@ -224,7 +238,7 @@ class HitterCardStats(PlayerCardStats):
         return bp
 
     def cl_r(self):
-        return '{:+d}'.format(self.clutch_right)
+        return '{0:{1}}'.format(self.clutch_right, '+' if self.clutch_right else '')
 
 
 class PitcherCardStats(PlayerCardStats):
@@ -239,6 +253,12 @@ class PitcherCardStats(PlayerCardStats):
     pitcher_hitting_card = models.IntegerField()
     power = models.BooleanField()
 
+    def display_name(self):
+        display_name = self.player.display_name()
+        if self.player.throws.lower() == 'l':
+            display_name += '*'
+        return display_name
+
     def bp_l(self):
         if self.triangles_left == 0:
             return '{}'.format(self.diamonds_left) + '\u25bc'
@@ -251,8 +271,19 @@ class PitcherCardStats(PlayerCardStats):
         else:
             return '{}'.format(self.diamonds_right)
 
+    def closer_display(self):
+        if self.closer_rating == -1:
+            return 'N'
+        elif self.closer_rating is None:
+            return ''
+        else:
+            return self.closer_rating
+
     def hold_rating(self):
-        return '{:+d}'.format(self.hold)
+        return '{0:{1}}'.format(self.hold, '+' if self.hold else '')
+
+    def defense(self):
+        return '{}e{}'.format(self.def_range, self.def_error)
 
     def phc(self):
         power = 'W'

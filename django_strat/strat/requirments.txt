@@ -1,3 +1,5 @@
 Django
 django-import-export
 psycopg2
+django-tables2
+django-extensions

@@ -5,7 +5,8 @@ from .models import Player, Franchise, Team, \
     Ballpark, Payroll, Contract, Arbitration, \
     DraftPick, Trades, TradePlayer, TradePick, TradeMoney, \
     AvailableDraftPick, AvailableFreeAgent, FreeAgentBid, \
-    HitterCardStats, PitcherCardStats
+    HitterCardStats, PitcherCardStats, HitterMLBStats, \
+    PitcherMLBStats
 
 
 @admin.register(Player)
@@ -39,7 +40,7 @@ class ContractAdmin(ImportExportModelAdmin):
 @admin.register(Franchise)
 class FranchiseAdmin(ImportExportModelAdmin):
     fields = [
-        'id',
+        'franchise_id',
         'location',
         'nickname',
         'owner'
@@ -198,4 +199,14 @@ class HitterCardStatsAdmin(ImportExportModelAdmin):
 
 @admin.register(PitcherCardStats)
 class PitcherCardStatsAdmin(ImportExportModelAdmin):
+    fields = []
+
+
+@admin.register(HitterMLBStats)
+class HitterMLBStatsAdmin(ImportExportModelAdmin):
+    fields = []
+
+
+@admin.register(PitcherMLBStats)
+class PitcherMLBStatsAdmin(ImportExportModelAdmin):
     fields = []

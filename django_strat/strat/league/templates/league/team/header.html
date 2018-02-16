@@ -12,8 +12,24 @@
     <p>Owner: None</p>
 {% endif %}
 <p><strong>Ballpark:</strong> {{team.team.ballpark.year}} {{team.team.ballpark.location}} - {{team.team.ballpark.name}}</p>
-<p>Singles vs Left: {{team.team.ballpark.singles_left}} Singles vs Right: {{team.team.ballpark.singles_right}}</p>
-<p>Home Runs vs Left: {{team.team.ballpark.homeruns_left}} Home Runs vs Right: {{team.team.ballpark.homeruns_right}}</p>
+<table border="1">
+    <tr>
+        <th align="center">Ballpark Ratings</th>
+        <th align="center">vs. Left</th>
+        <th align="center">vs. Right</th>
+    </tr>
+    <tr>
+        <td>Singles - &#x25bc;</td>
+        <td align="center">{{team.team.ballpark.singles_left}}</td>
+        <td align="center">{{team.team.ballpark.singles_right}}</td>
+    </tr>
+    <tr>
+        <td>Homeruns - &#x2666;</td>
+        <td align="center">{{team.team.ballpark.homeruns_left}}</td>
+        <td align="center">{{team.team.ballpark.homeruns_right}}</td>
+    </tr>
+</table>
+
 {% if team.team.postseason %}
     <p><strong>Postseason: NONE YET</strong></p>
 {% endif %}

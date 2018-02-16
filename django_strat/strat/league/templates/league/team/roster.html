@@ -1,14 +1,17 @@
 {% extends "./base.html" %}
+{% load render_table from django_tables2 %}
 
 {% load humanize %}
 
 {% block content %}
-    {% include 'league/card_stats/team_hitters.html' %}
-    {% include 'league/card_stats/team_pitchers.html' %}
+    <h2>Hitters Card Stats</h2>
+    {% render_table hitters_card %}
+    <h2>Pitchers Card Stats</h2>
+    {% render_table pitchers_card %}
     <h2>Uncarded Players</h2>
     <ul>
-    {% for u in team.card_stats.uncarded %}
-        <li><a href="{% url 'league:player_detail' u.id %}">{{u}}</a> </li>
-    {% endfor %}
+        {% for p in team.card_stats.uncarded %}
+        <li><a href="{% url 'league:player_detail' p.id %}">{{p}}</a> </li>
+        {% endfor %}
     </ul>
 {% endblock %}

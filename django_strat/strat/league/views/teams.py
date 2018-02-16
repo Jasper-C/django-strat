@@ -2,9 +2,11 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import render
 from django.utils import timezone
 from django.views import View
+from django_tables2 import RequestConfig
 
-from league.forms.teams import RenewableArbitration, GuarenteedArbitration
+from league.forms.teams import RenewableList
 from league.models.teams import Team
+from league.tables.card_stats import TeamHitter, TeamPitcher
 from league.views.team_helper import collect_teams, collect_team, collect_roster, \
     collect_payroll, collect_card_stats, collect_contract_display, collect_adjustments, \
     collect_renewable, collect_guarenteed, collect_arbitration, collect_draft_pick
@@ -19,14 +21,12 @@ class TeamIndex(View):
     def get(self, request, year=None):
         if year is None:
             year = timezone.now().year
-
         years = set(Team.objects.all().values_list("year", flat=True))
         next_year, last_year = None, None
         if year + 1 in years:
             next_year = year + 1
         if year - 1 in years:
             last_year = year - 1
-
         team_list = collect_teams(year)
         for t in team_list:
             t = collect_roster(t)
@@ -53,16 +53,6 @@ class TeamStats(View):
             'team': team,
         }
         return render(request, 'league/team/stats.html', context)
-
-
-# This view has been depricated
-def team_detail(request, year, abbreviation):
-    team = collect_team(year, abbreviation)
-    team = collect_roster(team)
-    context = {
-        'team': team,
-    }
-    return render(request, 'league/team/detail.html', context)
 
 
 class TeamContracts(View):
@@ -141,7 +131,14 @@ class TeamRoster(View):
         team = collect_team(year, abbreviation)
         team = collect_roster(team)
         team = collect_card_stats(team)
+        config = RequestConfig(request)
+        hitters_card = TeamHitter(team['card_stats']['hitters'], prefix='hit-')
+        pitchers_card = TeamPitcher(team['card_stats']['pitchers'], prefix='pit-')
+        config.configure(hitters_card)
+        config.configure(pitchers_card)
         context = {
+            'hitters_card': hitters_card,
+            'pitchers_card': pitchers_card,
             'team': team,
         }
         return render(request, 'league/team/roster.html', context)
@@ -156,8 +153,7 @@ class TeamArbitration(View):
         renewable = collect_renewable(team)
         guarenteed = collect_guarenteed(team)
         arbitration = collect_arbitration(team)
-        renewable = RenewableArbitration(request.POST or None, renewable=renewable)
-        guarenteed = GuarenteedArbitration(request.POST or None, guarenteed=guarenteed)
+        renewable = RenewableList(request.POST or None, renewable=renewable)
         context = {
             'team': team,
             'renewable': renewable,

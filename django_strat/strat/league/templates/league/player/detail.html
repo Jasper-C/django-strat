@@ -60,15 +60,23 @@
 </style>
 <!--Header-->
 {% include 'league/player/header.html' %}
-<!--Season Stats    -->
+<!--BAD League Stats    -->
 {% if player.player_type in 'hx' %}
-    <h2 class="section_heading">Standard Batting</h2>
+    <h2 class="section_heading">Standard Batting (BAD)</h2>
     {% include 'league/stats/one_player_hitter.html' %}
 {% endif %}
 {% if player.player_type in 'px' %}
-    <h2 class="section_heading">Standard Pitching</h2>
+    <h2 class="section_heading">Standard Pitching (BAD)</h2>
 {% endif %}
 <!--Playoff Stats-->
+<!--MLB Stats    -->
+{% if player.player_type in 'hx' %}
+    <h2 class="section_heading">Standard Batting (MLB)</h2>
+    {% include 'league/stats/one_player_hitter.html' %}
+{% endif %}
+{% if player.player_type in 'px' %}
+    <h2 class="section_heading">Standard Pitching (MLB)</h2>
+{% endif %}
 <!--Card Stats-->
 {% if player.player_type in 'hx' %}
     <h2 class="section_heading">Hitting Card Stats</h2>

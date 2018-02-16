@@ -11,7 +11,7 @@ class IndexView(generic.ListView):
     context_object_name = 'player_list'
 
     def get_queryset(self):
-        return Player.objects.all()
+        return Player.objects.filter(active=True)
 
 
 class PlayerDetail(View):

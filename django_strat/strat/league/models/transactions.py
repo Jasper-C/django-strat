@@ -153,7 +153,7 @@ class DraftPick(models.Model):
 
 class Trades(models.Model):
     date = models.DateTimeField()
-    year = models.IntegerField(verbose_name="League Season")
+    year = models.IntegerField(verbose_name="League Season", default=timezone.now().year)
     teams = models.ManyToManyField(Franchise)
     notes = models.TextField(null=True, blank=True)
     story = models.TextField(null=True, blank=True)
@@ -180,13 +180,13 @@ class TradePick(TradePart):
 
 class TradeMoney(TradePart):
     money = models.IntegerField()
-    year = models.IntegerField(verbose_name='Effective In Year')
+    year = models.IntegerField(verbose_name='Effective In Year', default=timezone.now().year)
     payroll_note = models.TextField()
 
 
 class AvailableDraftPick(models.Model):
     player = models.ForeignKey(Player, on_delete=models.PROTECT)
-    year = models.IntegerField()
+    year = models.IntegerField(default=timezone.now().year)
     contract = models.CharField(max_length=4)
     salary = models.IntegerField()
 

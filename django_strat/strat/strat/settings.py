@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'league',
     'homepage',
     'import_export',
+    'django_tables2',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
